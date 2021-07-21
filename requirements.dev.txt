@@ -2,3 +2,4 @@ pytest
 wheel
 twine
 flake8
+Cython>=0.20.0
