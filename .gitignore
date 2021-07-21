@@ -1,0 +1,8 @@
+venv
+build
+dist
+.idea
+.pytest_cache
+*.egg-info
+*.eggs
+src/aimrocks/_rocksdb.cpp
