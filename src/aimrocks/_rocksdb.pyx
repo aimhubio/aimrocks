@@ -1,3 +1,5 @@
+# distutils: language = c++
+# distutils: language_level = 3
 import cython
 from libcpp.string cimport string
 from libcpp.deque cimport deque
@@ -1685,7 +1687,7 @@ cdef class DB(object):
 
     def __dealloc__(self):
         self.close()
-        
+
     def close(self):
         cdef ColumnFamilyOptions copts
         if not self.db == NULL:
@@ -2259,6 +2261,9 @@ cdef class BaseIterator(object):
         return ret
 
     def get(self):
+        if not self.ptr.Valid():
+            raise ValueError()
+
         cdef object ret = self.get_ob()
         return ret
 
