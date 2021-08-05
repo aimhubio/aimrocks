@@ -1,4 +1,4 @@
-from std_memory cimport shared_ptr
+from aimrocks.std_memory cimport shared_ptr
 
 cdef extern from "rocksdb/cache.h" namespace "rocksdb":
     cdef cppclass Cache:

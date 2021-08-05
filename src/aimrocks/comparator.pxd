@@ -1,7 +1,7 @@
 from libcpp.string cimport string
-from slice_ cimport Slice
-from logger cimport Logger
-from std_memory cimport shared_ptr
+from aimrocks.slice_ cimport Slice
+from aimrocks.logger cimport Logger
+from aimrocks.std_memory cimport shared_ptr
 
 cdef extern from "rocksdb/comparator.h" namespace "rocksdb":
     cdef cppclass Comparator:

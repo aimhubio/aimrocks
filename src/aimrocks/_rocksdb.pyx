@@ -14,35 +14,35 @@ from cpython.bytes cimport PyBytes_FromString
 from cpython.bytes cimport PyBytes_FromStringAndSize
 from cpython.unicode cimport PyUnicode_Decode
 
-from std_memory cimport shared_ptr
-cimport options
-cimport merge_operator
-cimport filter_policy
-cimport comparator
-cimport slice_transform
-cimport cache
-cimport logger
-cimport snapshot
-cimport db
-cimport iterator
-cimport backup
-cimport env
-cimport table_factory
-cimport memtablerep
-cimport universal_compaction
+from aimrocks.std_memory cimport shared_ptr
+cimport aimrocks.options as options
+cimport aimrocks.merge_operator as merge_operator
+cimport aimrocks.filter_policy as filter_policy
+cimport aimrocks.comparator as comparator
+cimport aimrocks.slice_transform as slice_transform
+cimport aimrocks.cache as cache
+cimport aimrocks.logger as logger
+cimport aimrocks.snapshot as snapshot
+cimport aimrocks.db as db
+cimport aimrocks.iterator as iterator
+cimport aimrocks.backup as backup
+cimport aimrocks.env as env
+cimport aimrocks.table_factory as table_factory
+cimport aimrocks.memtablerep as memtablerep
+cimport aimrocks.universal_compaction as universal_compaction
 
 # Enums are the only exception for direct imports
 # Their name als already unique enough
-from universal_compaction cimport kCompactionStopStyleSimilarSize
-from universal_compaction cimport kCompactionStopStyleTotalSize
+from aimrocks.universal_compaction cimport kCompactionStopStyleSimilarSize
+from aimrocks.universal_compaction cimport kCompactionStopStyleTotalSize
 
-from options cimport kCompactionStyleLevel
-from options cimport kCompactionStyleUniversal
-from options cimport kCompactionStyleFIFO
-from options cimport kCompactionStyleNone
+from aimrocks.options cimport kCompactionStyleLevel
+from aimrocks.options cimport kCompactionStyleUniversal
+from aimrocks.options cimport kCompactionStyleFIFO
+from aimrocks.options cimport kCompactionStyleNone
 
-from slice_ cimport Slice
-from status cimport Status
+from aimrocks.slice_ cimport Slice
+from aimrocks.status cimport Status
 
 import sys
 from interfaces import MergeOperator as IMergeOperator

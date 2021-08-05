@@ -3,17 +3,17 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libc.stdint cimport uint64_t
 from libc.stdint cimport uint32_t
-from std_memory cimport shared_ptr
-from comparator cimport Comparator
-from merge_operator cimport MergeOperator
-from logger cimport Logger
-from slice_ cimport Slice
-from snapshot cimport Snapshot
-from slice_transform cimport SliceTransform
-from table_factory cimport TableFactory
-from memtablerep cimport MemTableRepFactory
-from universal_compaction cimport CompactionOptionsUniversal
-from cache cimport Cache
+from aimrocks.std_memory cimport shared_ptr
+from aimrocks.comparator cimport Comparator
+from aimrocks.merge_operator cimport MergeOperator
+from aimrocks.logger cimport Logger
+from aimrocks.slice_ cimport Slice
+from aimrocks.snapshot cimport Snapshot
+from aimrocks.slice_transform cimport SliceTransform
+from aimrocks.table_factory cimport TableFactory
+from aimrocks.memtablerep cimport MemTableRepFactory
+from aimrocks.universal_compaction cimport CompactionOptionsUniversal
+from aimrocks.cache cimport Cache
 
 cdef extern from "rocksdb/options.h" namespace "rocksdb":
     cdef cppclass CompressionOptions:
