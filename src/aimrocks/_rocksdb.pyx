@@ -45,13 +45,13 @@ from aimrocks.slice_ cimport Slice
 from aimrocks.status cimport Status
 
 import sys
-from interfaces import MergeOperator as IMergeOperator
-from interfaces import AssociativeMergeOperator as IAssociativeMergeOperator
-from interfaces import FilterPolicy as IFilterPolicy
-from interfaces import Comparator as IComparator
-from interfaces import SliceTransform as ISliceTransform
+from aimrocks.interfaces import MergeOperator as IMergeOperator
+from aimrocks.interfaces import AssociativeMergeOperator as IAssociativeMergeOperator
+from aimrocks.interfaces import FilterPolicy as IFilterPolicy
+from aimrocks.interfaces import Comparator as IComparator
+from aimrocks.interfaces import SliceTransform as ISliceTransform
 import traceback
-import errors
+import aimrocks.errors as errors
 import weakref
 
 ctypedef const filter_policy.FilterPolicy ConstFilterPolicy
