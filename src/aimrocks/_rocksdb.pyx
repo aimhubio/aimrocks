@@ -1450,6 +1450,19 @@ cdef class Options(ColumnFamilyOptions):
                 self.opts.row_cache = self.py_row_cache.get_cache()
 
 
+    # cpp_bool skip_checking_sst_file_sizes_on_db_open
+    property skip_checking_sst_file_sizes_on_db_open:
+        def __get__(self):
+            return self.opts.skip_checking_sst_file_sizes_on_db_open
+        def __set__(self, value):
+            self.opts.skip_checking_sst_file_sizes_on_db_open = value
+
+    # cpp_bool skip_stats_update_on_db_open
+    property skip_stats_update_on_db_open:
+        def __get__(self):
+            return self.opts.skip_stats_update_on_db_open
+        def __set__(self, value):
+            self.opts.skip_stats_update_on_db_open = value
 # Forward declaration
 cdef class Snapshot
 

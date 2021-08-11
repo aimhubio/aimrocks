@@ -103,6 +103,9 @@ cdef extern from "rocksdb/options.h" namespace "rocksdb":
         cpp_bool enable_write_thread_adaptive_yield
         shared_ptr[Cache] row_cache
 
+        cpp_bool skip_checking_sst_file_sizes_on_db_open
+        cpp_bool skip_stats_update_on_db_open
+
     cdef cppclass ColumnFamilyOptions:
         ColumnFamilyOptions()
         ColumnFamilyOptions(const Options& options)
