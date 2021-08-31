@@ -67,7 +67,7 @@ then
   mv 6.13.fb.tar.gz rocksdb-6.13.fb.tar.gz
   tar zxvf rocksdb-6.13.fb.tar.gz
   cd rocksdb-6.13.fb
-  DEBUG_LEVEL=0 make shared_lib
+  DEBUG_LEVEL=0 make -j2 shared_lib
   DEBUG_LEVEL=0 make static_lib
   strip --strip-debug librocksdb.a
   DEBUG_LEVEL=0 make install-static
