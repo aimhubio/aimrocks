@@ -4,8 +4,8 @@ cd /opt
 
 echo "Installing 3rd party libraries."
 
-apt-get update
-apt-get install -y build-essential cmake wget
+#apt-get update
+yum install -y build-essential cmake wget
 
 #rocksdb static lib
 mkdir rocksdb && cd rocksdb
