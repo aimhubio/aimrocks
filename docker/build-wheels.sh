@@ -64,7 +64,7 @@ rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 if ls /etc/redhat-release
 then
   wget https://github.com/facebook/rocksdb/archive/6.13.fb.tar.gz
-  mv 6.13.tar.gz rocksdb-6.13.tar.gz
+  mv 6.13.fb.tar.gz rocksdb-6.13.fb.tar.gz
   tar zxvf rocksdb-6.13.fb.tar.gz
   cd rocksdb-6.13.fb
   DEBUG_LEVEL=0 make shared_lib
