@@ -4,8 +4,16 @@ cd /opt
 
 echo "Installing 3rd party libraries."
 
-#apt-get update
-yum install -y build-essential cmake wget
+# check OS version
+ls /etc/redhat-release
+if [$? == 0]
+then
+  # CentOS
+  yum install -y build-essential cmake wget
+else
+  apt-get update
+  apt-get install -y build-essential cmake wget
+fi
 
 #rocksdb static lib
 mkdir rocksdb && cd rocksdb
@@ -73,6 +81,7 @@ do
   # downgrade to pip-18
   $PYTHON_ROOT/bin/pip install --upgrade pip==18
   $PYTHON_ROOT/bin/python setup.py bdist_wheel -d linux_dist
+  rm -rf build
 done
 
 for whl in $(ls ./linux_dist)
