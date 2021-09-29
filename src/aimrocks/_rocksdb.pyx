@@ -1596,9 +1596,11 @@ cdef class DB(object):
     cdef list cf_handles
     cdef list cf_options
 
-    def __cinit__(self, db_name, Options opts, dict column_families=None, read_only=False):
+    def __cinit__(self, db_name, Options opts, dict column_families=None, read_only=False,
+                  secondary_path=None):
         cdef Status st
         cdef string db_path
+        cdef string secondary_path_c
         cdef vector[db.ColumnFamilyDescriptor] column_family_descriptors
         cdef vector[db.ColumnFamilyHandle*] column_family_handles
         cdef bytes default_cf_name = db.kDefaultColumnFamilyName
@@ -1644,7 +1646,18 @@ cdef class DB(object):
                     )
                 )
                 self.cf_options.append(cf_options)
-        if read_only:
+        if secondary_path is not None:
+            assert read_only
+            secondary_path_c = path_to_string(secondary_path)
+            with nogil:
+                st = db.DB_OpenAsSecondary_ColumnFamilies(
+                    deref(opts.opts),
+                    db_path,
+                    secondary_path_c,
+                    column_family_descriptors,
+                    &column_family_handles,
+                    &self.db)
+        elif read_only:
             with nogil:
                 st = db.DB_OpenForReadOnly_ColumnFamilies(
                     deref(opts.opts),
@@ -2069,6 +2082,9 @@ cdef class DB(object):
             return string_to_bytes(value)
         else:
             return None
+
+    def try_catch_up_with_primary(self):
+        self.db.TryCatchUpWithPrimary()
 
     def get_live_files_metadata(self):
         cdef vector[db.LiveFileMetaData] metadata
