@@ -14,44 +14,44 @@ from cpython.bytes cimport PyBytes_FromString
 from cpython.bytes cimport PyBytes_FromStringAndSize
 from cpython.unicode cimport PyUnicode_Decode
 
-from std_memory cimport shared_ptr
-cimport options
-cimport merge_operator
-cimport filter_policy
-cimport comparator
-cimport slice_transform
-cimport cache
-cimport logger
-cimport snapshot
-cimport db
-cimport iterator
-cimport backup
-cimport env
-cimport table_factory
-cimport memtablerep
-cimport universal_compaction
+from aimrocks.std_memory cimport shared_ptr
+cimport aimrocks.options as options
+cimport aimrocks.merge_operator as merge_operator
+cimport aimrocks.filter_policy as filter_policy
+cimport aimrocks.comparator as comparator
+cimport aimrocks.slice_transform as slice_transform
+cimport aimrocks.cache as cache
+cimport aimrocks.logger as logger
+cimport aimrocks.snapshot as snapshot
+cimport aimrocks.db as db
+cimport aimrocks.iterator as iterator
+cimport aimrocks.backup as backup
+cimport aimrocks.env as env
+cimport aimrocks.table_factory as table_factory
+cimport aimrocks.memtablerep as memtablerep
+cimport aimrocks.universal_compaction as universal_compaction
 
 # Enums are the only exception for direct imports
 # Their name als already unique enough
-from universal_compaction cimport kCompactionStopStyleSimilarSize
-from universal_compaction cimport kCompactionStopStyleTotalSize
+from aimrocks.universal_compaction cimport kCompactionStopStyleSimilarSize
+from aimrocks.universal_compaction cimport kCompactionStopStyleTotalSize
 
-from options cimport kCompactionStyleLevel
-from options cimport kCompactionStyleUniversal
-from options cimport kCompactionStyleFIFO
-from options cimport kCompactionStyleNone
+from aimrocks.options cimport kCompactionStyleLevel
+from aimrocks.options cimport kCompactionStyleUniversal
+from aimrocks.options cimport kCompactionStyleFIFO
+from aimrocks.options cimport kCompactionStyleNone
 
-from slice_ cimport Slice
-from status cimport Status
+from aimrocks.slice_ cimport Slice
+from aimrocks.status cimport Status
 
 import sys
-from interfaces import MergeOperator as IMergeOperator
-from interfaces import AssociativeMergeOperator as IAssociativeMergeOperator
-from interfaces import FilterPolicy as IFilterPolicy
-from interfaces import Comparator as IComparator
-from interfaces import SliceTransform as ISliceTransform
+from aimrocks.interfaces import MergeOperator as IMergeOperator
+from aimrocks.interfaces import AssociativeMergeOperator as IAssociativeMergeOperator
+from aimrocks.interfaces import FilterPolicy as IFilterPolicy
+from aimrocks.interfaces import Comparator as IComparator
+from aimrocks.interfaces import SliceTransform as ISliceTransform
 import traceback
-import errors
+import aimrocks.errors as errors
 import weakref
 
 ctypedef const filter_policy.FilterPolicy ConstFilterPolicy
@@ -1450,6 +1450,19 @@ cdef class Options(ColumnFamilyOptions):
                 self.opts.row_cache = self.py_row_cache.get_cache()
 
 
+    # cpp_bool skip_checking_sst_file_sizes_on_db_open
+    property skip_checking_sst_file_sizes_on_db_open:
+        def __get__(self):
+            return self.opts.skip_checking_sst_file_sizes_on_db_open
+        def __set__(self, value):
+            self.opts.skip_checking_sst_file_sizes_on_db_open = value
+
+    # cpp_bool skip_stats_update_on_db_open
+    property skip_stats_update_on_db_open:
+        def __get__(self):
+            return self.opts.skip_stats_update_on_db_open
+        def __set__(self, value):
+            self.opts.skip_stats_update_on_db_open = value
 # Forward declaration
 cdef class Snapshot
 

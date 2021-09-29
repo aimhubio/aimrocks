@@ -5,9 +5,9 @@ from libc.stdint cimport uint32_t
 from libc.stdint cimport int64_t
 from libc.stdint cimport uint64_t
 
-from status cimport Status
-from db cimport DB
-from env cimport Env
+from aimrocks.status cimport Status
+from aimrocks.db cimport DB
+from aimrocks.env cimport Env
 
 cdef extern from "rocksdb/utilities/backupable_db.h" namespace "rocksdb":
     ctypedef uint32_t BackupID

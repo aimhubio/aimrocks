@@ -2,4 +2,4 @@ pytest
 wheel
 twine
 flake8
-Cython>=0.20.0
+Cython==3.0.0a9
