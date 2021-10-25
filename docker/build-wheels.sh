@@ -61,27 +61,27 @@ cd ../..
 rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
 #rocksdb static lib
-if ls /etc/redhat-release
-then
-  wget https://github.com/facebook/rocksdb/archive/6.13.fb.tar.gz
-  mv 6.13.fb.tar.gz rocksdb-6.13.fb.tar.gz
-  tar zxvf rocksdb-6.13.fb.tar.gz
-  cd rocksdb-6.13.fb
-  PORTABLE=1 DEBUG_LEVEL=0 make -j2 shared_lib
-  PORTABLE=1 DEBUG_LEVEL=0 make static_lib
-  strip --strip-debug librocksdb.a
-  PORTABLE=1 DEBUG_LEVEL=0 make install-static
-  cd ..
-  rm -rf rocksdb-6.13.fb rocksdb-6.13.fb.tar.gz
-else
-  mkdir rocksdb && cd rocksdb
-  wget https://anaconda.org/conda-forge/rocksdb/6.13.3/download/linux-64/rocksdb-6.13.3-hda8cf21_2.tar.bz2
-  tar -xf rocksdb-6.13.3-hda8cf21_2.tar.bz2
-  cp lib/librocksdb.a /usr/local/lib/
-  cp -r include/rocksdb/ /usr/local/include/
-  cd ..
-  rm -rf rocksdb
-fi
+#if ls /etc/redhat-release
+#then
+wget https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz
+mv 6.25.fb.tar.gz rocksdb-6.25.fb.tar.gz
+tar zxvf rocksdb-6.25.fb.tar.gz
+cd rocksdb-6.25.fb
+PORTABLE=1 DEBUG_LEVEL=0 make -j2 shared_lib
+PORTABLE=1 DEBUG_LEVEL=0 make static_lib
+strip --strip-debug librocksdb.a
+PORTABLE=1 DEBUG_LEVEL=0 make install-static
+cd ..
+rm -rf rocksdb-6.25.fb rocksdb-6.25.fb.tar.gz
+#else
+#  mkdir rocksdb && cd rocksdb
+#  wget https://anaconda.org/conda-forge/rocksdb/6.13.3/download/linux-64/rocksdb-6.13.3-hda8cf21_2.tar.bz2
+#  tar -xf rocksdb-6.13.3-hda8cf21_2.tar.bz2
+#  cp lib/librocksdb.a /usr/local/lib/
+#  cp -r include/rocksdb/ /usr/local/include/
+#  cd ..
+#  rm -rf rocksdb
+#fi
 
 echo "3rd party libraries install. SUCCESS"
 
