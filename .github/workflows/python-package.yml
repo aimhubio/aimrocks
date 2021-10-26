@@ -26,8 +26,8 @@ jobs:
 
       - name: Build bdist wheels
         run: |
-         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux2010_x86_64 bash /opt/aimrocks/docker/build-wheels.sh
-         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux_2_24_x86_64 bash /opt/aimrocks/docker/build-wheels.sh
+         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux2010_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
+         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux_2_24_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
 
       - name: Install dev dependencies
         run: |
