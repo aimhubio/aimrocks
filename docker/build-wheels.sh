@@ -5,7 +5,7 @@ cd /opt
 # check OS version
 if ls /etc/redhat-release
 then
-  if [[ $(< /etc/redhat-release) == "CentOS release 5*" ]]
+  if [[ $(< /etc/redhat-release) == "CentOS release 5"* ]]
   then
     # CentOS 5
     # install cmake
