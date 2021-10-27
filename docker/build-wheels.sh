@@ -13,6 +13,8 @@ then
     tar zxvf cmake-3.12.3.tar.gz
     cd cmake-3.12.3
     ./bootstrap --prefix=/usr/local && make -j2 && make install
+    cd ..
+    rm -rf cmake-3.12.3/ cmake-3.12.3.tar.gz
   else
     # CentOS 6+
     yum install -y build-essential
