@@ -15,7 +15,6 @@ then
     ./bootstrap --prefix=/usr/local && make -j2 && make install
   else
     # CentOS 6+
-    echo "CentOS 6+"
     yum install -y build-essential
   fi
 else
