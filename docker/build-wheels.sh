@@ -5,11 +5,21 @@ cd /opt
 # check OS version
 if ls /etc/redhat-release
 then
-  # CentOS
-  yum install -y build-essential wget
+  if [[ $(< /etc/redhat-release) == "CentOS release 5*"]]
+  then
+    # CentOS 5
+    # install cmake
+    curl -L https://cmake.org/files/v3.12/cmake-3.12.3.tar.gz -o cmake-3.12.3.tar.gz
+    tar zxvf cmake-3.12.3.tar.gz
+    cd cmake-3.12.3
+    ./bootstrap --prefix=/usr/local && make -j2 && make install
+  else
+    # CentOS 6+
+    yum install -y build-essential
+  fi
 else
   apt-get update
-  apt-get install -y build-essential wget
+  apt-get install -y build-essential
 fi
 
 echo "Installing 3rd party libraries."
@@ -31,8 +41,7 @@ cd ..
 rm -rf bzip2-1.0.8/ bzip2-1.0.8.tar.gz
 
 # zstd
-wget https://github.com/facebook/zstd/archive/v1.1.3.tar.gz
-mv v1.1.3.tar.gz zstd-1.1.3.tar.gz
+curl -L https://github.com/facebook/zstd/archive/v1.1.3.tar.gz -o zstd-1.1.3.tar.gz
 tar zxvf zstd-1.1.3.tar.gz
 cd zstd-1.1.3
 make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
@@ -40,8 +49,7 @@ cd ..
 rm -rf zstd-1.1.3 zstd-1.1.3.tar.gz
 
 # lz4
-wget https://github.com/lz4/lz4/archive/v1.9.3.tar.gz
-mv v1.9.3.tar.gz lz4-1.9.3.tar.gz
+curl -L  https://github.com/lz4/lz4/archive/v1.9.3.tar.gz -o lz4-1.9.3.tar.gz
 tar zxvf lz4-1.9.3.tar.gz
 cd lz4-1.9.3
 make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
@@ -49,8 +57,7 @@ cd ..
 rm -rf lz4-1.9.3 lz4-1.9.3.tar.gz
 
 # snappy
-wget https://github.com/google/snappy/archive/1.1.8.tar.gz
-mv 1.1.8.tar.gz snappy-1.1.8.tar.gz
+curl -L https://github.com/google/snappy/archive/1.1.8.tar.gz -o snappy-1.1.8.tar.gz
 tar zxvf snappy-1.1.8.tar.gz
 cd snappy-1.1.8
 mkdir build
@@ -61,7 +68,7 @@ cd ../..
 rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
 #rocksdb static lib
-wget https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz
+curl -L https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz
 mv 6.25.fb.tar.gz rocksdb-6.25.fb.tar.gz
 tar zxvf rocksdb-6.25.fb.tar.gz
 cd rocksdb-6.25.fb
