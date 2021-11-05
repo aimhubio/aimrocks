@@ -12,6 +12,7 @@ jobs:
           apt update && apt install -y docker.io
           sudo systemctl enable --now docker
 
+          docker pull quay.io/pypa/manylinux1_x86_64
           docker pull quay.io/pypa/manylinux_2_24_x86_64
           docker pull quay.io/pypa/manylinux2010_x86_64
 
@@ -26,6 +27,7 @@ jobs:
 
       - name: Build bdist wheels
         run: |
+         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux1_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
          docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux2010_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
          docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux_2_24_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
 
@@ -37,7 +39,7 @@ jobs:
         env:
           PYPI_PASSWORD: ${{ secrets.pypi_password }}
         run: |
-          python -m twine upload -u __token__ -p "${PYPI_PASSWORD}" multilinux_dist/*
+          python -m twine upload -u __token__ -p "${PYPI_PASSWORD}" manylinux_dist/*
 
   macos-dist:
     runs-on: ${{matrix.os}}

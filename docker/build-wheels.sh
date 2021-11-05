@@ -3,13 +3,21 @@
 cd /opt
 
 # check OS version
-if ls /etc/redhat-release
+if [[ -f /etc/redhat-release ]]
 then
-  # CentOS
-  yum install -y build-essential wget
-else
-  apt-get update
-  apt-get install -y build-essential wget
+  if [[ $(< /etc/redhat-release) == "CentOS release 5"* ]]
+  then
+    # CentOS 5
+    platform=centos_5
+
+    # install cmake
+    curl -L https://cmake.org/files/v3.12/cmake-3.12.3.tar.gz -o cmake-3.12.3.tar.gz
+    tar zxvf cmake-3.12.3.tar.gz
+    cd cmake-3.12.3
+    ./bootstrap --prefix=/usr/local && make -j2 && make install
+    cd ..
+    rm -rf cmake-3.12.3/ cmake-3.12.3.tar.gz
+  fi
 fi
 
 echo "Installing 3rd party libraries."
@@ -18,7 +26,7 @@ echo "Installing 3rd party libraries."
 cp aimrocks/deps/zlib/zlib-1.2.11.tar.gz .
 tar zxvf zlib-1.2.11.tar.gz
 cd zlib-1.2.11/
-./configure && make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
+./configure && make CFLAGS="-fPIC" CXXFLAGS="-fPIC" && make install
 cd ..
 rm -rf zlib-1.2.11/ zlib-1.2.11.tar.gz
 
@@ -26,45 +34,46 @@ rm -rf zlib-1.2.11/ zlib-1.2.11.tar.gz
 cp aimrocks/deps/bzip2/bzip2-1.0.8.tar.gz .
 tar zxvf bzip2-1.0.8.tar.gz
 cd bzip2-1.0.8/
-make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
+make CFLAGS="-fPIC" CXXFLAGS="-fPIC" && make install
 cd ..
 rm -rf bzip2-1.0.8/ bzip2-1.0.8.tar.gz
 
 # zstd
-wget https://github.com/facebook/zstd/archive/v1.1.3.tar.gz
-mv v1.1.3.tar.gz zstd-1.1.3.tar.gz
+curl -L https://github.com/facebook/zstd/archive/v1.1.3.tar.gz -o zstd-1.1.3.tar.gz
 tar zxvf zstd-1.1.3.tar.gz
 cd zstd-1.1.3
-make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
+make CFLAGS="-fPIC" CXXFLAGS="-fPIC" && make install
 cd ..
 rm -rf zstd-1.1.3 zstd-1.1.3.tar.gz
 
 # lz4
-wget https://github.com/lz4/lz4/archive/v1.9.3.tar.gz
-mv v1.9.3.tar.gz lz4-1.9.3.tar.gz
+curl -L  https://github.com/lz4/lz4/archive/v1.9.3.tar.gz -o lz4-1.9.3.tar.gz
 tar zxvf lz4-1.9.3.tar.gz
 cd lz4-1.9.3
-make CFLAGS='-fPIC' CXXFLAGS='-fPIC' && make install
+make CFLAGS="-fPIC" CXXFLAGS="-fPIC" && make install
 cd ..
 rm -rf lz4-1.9.3 lz4-1.9.3.tar.gz
 
 # snappy
-wget https://github.com/google/snappy/archive/1.1.8.tar.gz
-mv 1.1.8.tar.gz snappy-1.1.8.tar.gz
+curl -L https://github.com/google/snappy/archive/1.1.8.tar.gz -o snappy-1.1.8.tar.gz
 tar zxvf snappy-1.1.8.tar.gz
 cd snappy-1.1.8
 mkdir build
 cd build
-cmake CFLAGS='-fPIC' CXXFLAGS='fPIC' -DCMAKE_POSITION_INDEPENDENT_CODE=ON .. && make && make install
+cmake CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON .. && make && make install
 cp libsnappy.a /usr/local/lib/
 cd ../..
 rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
 #rocksdb static lib
-wget https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz
-mv 6.25.fb.tar.gz rocksdb-6.25.fb.tar.gz
+curl -L https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz -o rocksdb-6.25.fb.tar.gz
 tar zxvf rocksdb-6.25.fb.tar.gz
 cd rocksdb-6.25.fb
+if [[ $platform == centos_5 ]]
+then
+  cp ../aimrocks/deps/rocksdb_sched.patch .
+  patch port/port_posix.cc rocksdb_sched.patch
+fi
 EXTRA_CFLAGS="-DSNAPPY -I /usr/local/include/" EXTRA_CXXFLAGS="-DSNAPPY -I /usr/local/include/" PORTABLE=1 DEBUG_LEVEL=0 make -j2 shared_lib
 EXTRA_CFLAGS="-DSNAPPY -I /usr/local/include/" EXTRA_CXXFLAGS="-DSNAPPY -I /usr/local/include/" PORTABLE=1 DEBUG_LEVEL=0 make static_lib
 strip --strip-debug librocksdb.a
@@ -77,22 +86,24 @@ echo "3rd party libraries install. SUCCESS"
 cd /opt/aimrocks
 
 echo "build python wheels"
-for python_version in 'cp36-cp36m' 'cp37-cp37m' 'cp38-cp38' 'cp39-cp39' 'cp310-cp310'
+python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39")
+if [[ $platform != centos_5 ]]
+then
+  python_versions+=("cp310-cp310")
+fi
+
+for python_version in "${python_versions[@]}"
 do
   PYTHON_ROOT=/opt/python/${python_version}/
-  if [ $python_version != "cp310-cp310" ]
-  then
-    # downgrade to pip-18
-    $PYTHON_ROOT/bin/pip install --upgrade pip==18
-  fi
   $PYTHON_ROOT/bin/python setup.py bdist_wheel -d linux_dist
   rm -rf build
 done
 
 for whl in $(ls ./linux_dist)
 do
-  auditwheel repair linux_dist/${whl} --wheel-dir multilinux_dist
+  auditwheel repair linux_dist/${whl} --wheel-dir manylinux_dist
 done
+rm -rf linux_dist
 
 echo "python wheels build. SUCCESS"
 echo "DONE"
