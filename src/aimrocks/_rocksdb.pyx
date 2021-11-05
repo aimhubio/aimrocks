@@ -36,6 +36,7 @@ cimport aimrocks.universal_compaction as universal_compaction
 from aimrocks.universal_compaction cimport kCompactionStopStyleSimilarSize
 from aimrocks.universal_compaction cimport kCompactionStopStyleTotalSize
 
+from aimrocks.options cimport FlushOptions
 from aimrocks.options cimport kCompactionStyleLevel
 from aimrocks.options cimport kCompactionStyleUniversal
 from aimrocks.options cimport kCompactionStyleFIFO
@@ -1326,6 +1327,12 @@ cdef class Options(ColumnFamilyOptions):
         def __set__(self, value):
             self.opts.max_log_file_size = value
 
+    property db_write_buffer_size:
+        def __get__(self):
+            return self.opts.db_write_buffer_size
+        def __set__(self, value):
+            self.opts.db_write_buffer_size = value
+
     property log_file_time_to_roll:
         def __get__(self):
             return self.opts.log_file_time_to_roll
@@ -1792,6 +1799,22 @@ cdef class DB(object):
 
         with nogil:
             st = self.db.DeleteRange(opts, cf_handle, c_begin_key, c_end_key)
+        check_status(st)
+
+    def flush(self):
+        cdef Status st
+        cdef FlushOptions options
+        cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
+
+        with nogil:
+            st = self.db.Flush(options, cf_handle)
+        check_status(st)
+
+    def flush_wal(self, sync=False):
+        cdef Status st
+        cdef cpp_bool c_sync = sync
+        with nogil:
+            st = self.db.FlushWAL(c_sync)
         check_status(st)
 
     def merge(self, key, value, sync=False, disable_wal=False):
