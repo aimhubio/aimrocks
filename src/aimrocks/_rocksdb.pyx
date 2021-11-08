@@ -1801,13 +1801,19 @@ cdef class DB(object):
             st = self.db.DeleteRange(opts, cf_handle, c_begin_key, c_end_key)
         check_status(st)
 
-    def flush(self):
+    def flush(self, ColumnFamilyHandle column_family=None, **py_options):
         cdef Status st
-        cdef FlushOptions options
-        cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
+
+        cdef FlushOptions c_options
+        c_options.wait = py_options.get('wait', True)
+        c_options.allow_write_stall = py_options.get('allow_write_stall', False)
+
+        cdef db.ColumnFamilyHandle * cf_handle = self.db.DefaultColumnFamily()
+        if column_family:
+            cf_handle = (<ColumnFamilyHandle?> column_family).get_handle()
 
         with nogil:
-            st = self.db.Flush(options, cf_handle)
+            st = self.db.Flush(c_options, cf_handle)
         check_status(st)
 
     def flush_wal(self, sync=False):

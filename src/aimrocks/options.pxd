@@ -171,6 +171,7 @@ cdef extern from "rocksdb/options.h" namespace "rocksdb":
 
     cdef cppclass FlushOptions:
         cpp_bool wait
+        cpp_bool allow_write_stall
 
     ctypedef enum BottommostLevelCompaction:
         blc_skip "rocksdb::BottommostLevelCompaction::kSkip"
