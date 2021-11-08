@@ -24,7 +24,7 @@ third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.a'.forma
 
 setup(
     name="aimrocks",
-    version='0.0.10',
+    version='0.0.11',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
     packages=find_packages('./src'),
