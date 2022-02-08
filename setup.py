@@ -1,10 +1,17 @@
 import os
+import sys
 import platform
 from setuptools import setup
 from setuptools import find_packages
 from setuptools import Extension
 
-from Cython.Build import cythonize
+
+try:
+    from Cython.Build import cythonize
+except ImportError:
+    print("Warning: Cython is not installed", file=sys.stderr)
+    # Falling back to simpler build
+    cythonize = lambda x: x
 
 
 aimrocks_extra_compile_args = [
