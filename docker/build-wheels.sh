@@ -66,9 +66,9 @@ cd ../..
 rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
 #rocksdb static lib
-curl -L https://github.com/facebook/rocksdb/archive/6.25.fb.tar.gz -o rocksdb-6.25.fb.tar.gz
-tar zxvf rocksdb-6.25.fb.tar.gz
-cd rocksdb-6.25.fb
+curl -L https://github.com/facebook/rocksdb/archive/6.28.fb.tar.gz -o rocksdb-6.28.fb.tar.gz
+tar zxvf rocksdb-6.28.fb.tar.gz
+cd rocksdb-6.28.fb
 if [[ $platform == centos_5 ]]
 then
   cp ../aimrocks/deps/rocksdb_sched.patch .
@@ -79,7 +79,7 @@ EXTRA_CFLAGS="-DSNAPPY -I /usr/local/include/" EXTRA_CXXFLAGS="-DSNAPPY -I /usr/
 strip --strip-debug librocksdb.a
 PORTABLE=1 DEBUG_LEVEL=0 make install-static
 cd ..
-rm -rf rocksdb-6.25.fb rocksdb-6.25.fb.tar.gz
+rm -rf rocksdb-6.28.fb rocksdb-6.28.fb.tar.gz
 
 echo "3rd party libraries install. SUCCESS"
 
