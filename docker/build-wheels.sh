@@ -95,6 +95,7 @@ fi
 for python_version in "${python_versions[@]}"
 do
   PYTHON_ROOT=/opt/python/${python_version}/
+  $PYTHON_ROOT/bin/python -m pip install Cython==3.0.0a10
   $PYTHON_ROOT/bin/python setup.py bdist_wheel -d linux_dist
   rm -rf build
 done
