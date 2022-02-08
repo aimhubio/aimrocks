@@ -1427,7 +1427,7 @@ class ItemsIterator(BaseIterator):
 #         c_backup_dir = path_to_string(backup_dir)
 #         st = backup.BackupEngine_Open(
 #             env.Env_Default(),
-#             backup.BackupableDBOptions(c_backup_dir),
+#             backup.BackupEngineOptions(c_backup_dir),
 #             cython.address(self.engine))
 
 #         check_status(st)
