@@ -403,22 +403,10 @@ cdef class ColumnFamilyOptions(object):
     # property max_bytes_for_level_multiplier_additional:
     #     def __get__(self)
     #     def __set__(self, value)
-    # property soft_rate_limit:
-    #     def __get__(self)
-    #     def __set__(self, value)
-    # property hard_rate_limit:
-    #     def __get__(self)
-    #     def __set__(self, value)
-    # property rate_limit_delay_max_milliseconds:
-    #     def __get__(self)
-    #     def __set__(self, value)
     # property arena_block_size:
     #     def __get__(self)
     #     def __set__(self, value)
     # property disable_auto_compactions:
-    #     def __get__(self)
-    #     def __set__(self, value)
-    # property purge_redundant_kvs_while_flush:
     #     def __get__(self)
     #     def __set__(self, value)
     # # FIXME: remove to util/options_helper.h
@@ -540,9 +528,6 @@ cdef class Options(ColumnFamilyOptions):
 #         def __get__(self)
 #         def __set__(self, value)
 #     property is_fd_close_on_exec:
-#         def __get__(self)
-#         def __set__(self, value)
-#     property skip_log_error_on_recovery:
 #         def __get__(self)
 #         def __set__(self, value)
 #     property stats_dump_period_sec:

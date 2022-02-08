@@ -1057,24 +1057,6 @@ cdef class ColumnFamilyOptions(object):
         def __set__(self, value):
             self.copts.max_bytes_for_level_multiplier_additional = value
 
-    property soft_rate_limit:
-        def __get__(self):
-            return self.copts.soft_rate_limit
-        def __set__(self, value):
-            self.copts.soft_rate_limit = value
-
-    property hard_rate_limit:
-        def __get__(self):
-            return self.copts.hard_rate_limit
-        def __set__(self, value):
-            self.copts.hard_rate_limit = value
-
-    property rate_limit_delay_max_milliseconds:
-        def __get__(self):
-            return self.copts.rate_limit_delay_max_milliseconds
-        def __set__(self, value):
-            self.copts.rate_limit_delay_max_milliseconds = value
-
     property arena_block_size:
         def __get__(self):
             return self.copts.arena_block_size
@@ -1086,12 +1068,6 @@ cdef class ColumnFamilyOptions(object):
             return self.copts.disable_auto_compactions
         def __set__(self, value):
             self.copts.disable_auto_compactions = value
-
-    property purge_redundant_kvs_while_flush:
-        def __get__(self):
-            return self.copts.purge_redundant_kvs_while_flush
-        def __set__(self, value):
-            self.copts.purge_redundant_kvs_while_flush = value
 
     # FIXME: remove to util/options_helper.h
     #  property allow_os_buffer:
@@ -1417,12 +1393,6 @@ cdef class Options(ColumnFamilyOptions):
             return self.opts.is_fd_close_on_exec
         def __set__(self, value):
             self.opts.is_fd_close_on_exec = value
-
-    property skip_log_error_on_recovery:
-        def __get__(self):
-            return self.opts.skip_log_error_on_recovery
-        def __set__(self, value):
-            self.opts.skip_log_error_on_recovery = value
 
     property stats_dump_period_sec:
         def __get__(self):
