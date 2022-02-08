@@ -1,1 +1,1 @@
-from ._rocksdb import *
+from .lib_rocksdb import *

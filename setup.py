@@ -4,6 +4,8 @@ from setuptools import setup
 from setuptools import find_packages
 from setuptools import Extension
 
+from Cython.Build import cythonize
+
 
 aimrocks_extra_compile_args = [
     '-std=c++11',
@@ -24,20 +26,20 @@ third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.a'.forma
 
 setup(
     name="aimrocks",
-    version='0.0.10',
+    version='0.0.11',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
     packages=find_packages('./src'),
     package_dir={'': 'src'},
-    ext_modules=[
+    ext_modules=cythonize([
         Extension(
-            'aimrocks._rocksdb',
-            ['src/aimrocks/_rocksdb.pyx'],
+            'aimrocks.lib_rocksdb',
+            ['src/aimrocks/lib_rocksdb.pyx'],
             extra_compile_args=aimrocks_extra_compile_args,
             language='c++',
             extra_objects=third_party_libs
         )
-    ],
+    ]),
     include_package_data=True,
     zip_safe=False,
 )
