@@ -1,0 +1,30 @@
+diff --git a/port/port_posix.cc b/port/port_posix.cc
+index 8615f11d6..4c5bbc590 100644
+--- a/port/port_posix.cc
++++ b/port/port_posix.cc
+@@ -17,6 +17,25 @@
+ #endif
+ #include <errno.h>
+ #include <sched.h>
++
++/* Normally defined in <linux/sched.h> */
++#ifndef SCHED_NORMAL
++#define SCHED_NORMAL	0
++#endif
++#ifndef SCHED_FIFO
++#define SCHED_FIFO	1
++#endif
++#ifndef SCHED_RR
++#define SCHED_RR	2
++#endif
++#ifndef SCHED_BATCH
++#define SCHED_BATCH	3
++#endif
++/* SCHED_ISO not yet implemented */
++#ifndef SCHED_IDLE
++#define SCHED_IDLE	5
++#endif
++
+ #include <signal.h>
+ #include <stdio.h>
+ #include <string.h>
