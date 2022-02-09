@@ -38,8 +38,8 @@ setup(
     package_dir={'': 'src'},
     ext_modules=[
         Extension(
-            'aimrocks._rocksdb',
-            ['src/aimrocks/_rocksdb.pyx'],
+            'aimrocks.lib_rocksdb',
+            ['src/aimrocks/lib_rocksdb.pyx'],
             extra_compile_args=aimrocks_extra_compile_args,
             language='c++',
             extra_objects=third_party_libs
