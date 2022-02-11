@@ -46,25 +46,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+#        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.8' ]
         os: [ 'macos-latest' ]
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
     steps:
       - name: Install third party deps (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew update
-          brew install rocksdb
+#          brew update
+#          brew install rocksdb
+
+          # build zlib
           curl http://www.zlib.net/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
           tar -xzf zlib-1.2.11.tar.gz
           cd zlib-1.2.11/
           ./configure && make install
           cd ../
+          rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
+
+          # build bzip
           curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
           tar -xzf bzip2-1.0.8.tar.gz
           cd bzip2-1.0.8/
           sudo make install
           cd ../
+          rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
+
+          # build rocksdb
+          curl -L https://github.com/facebook/rocksdb/archive/6.28.fb.tar.gz -o rocksdb-6.28.fb.tar.gz
+          tar zxvf rocksdb-6.28.fb.tar.gz
+          cd rocksdb-6.28.fb
+          make -j2 static_lib && strip -S librocksdb.a && make install-static
 
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -83,10 +96,10 @@ jobs:
         run: |
           python setup.py bdist_wheel -d dist
 
-      - name: Remove macos deps
-        if: runner.os == 'macOS'
-        run: |
-          brew remove rocksdb
+#      - name: Remove macos deps
+#        if: runner.os == 'macOS'
+#        run: |
+#          brew remove rocksdb
 
       - name: Test bdist
         run: |
