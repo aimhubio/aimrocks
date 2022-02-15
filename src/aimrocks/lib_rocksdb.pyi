@@ -822,12 +822,8 @@ class ColumnFamilyOptions(object):
         self.max_bytes_for_level_base = None
         self.max_bytes_for_level_multiplier = None
         self.max_bytes_for_level_multiplier_additional = None
-        self.soft_rate_limit = None
-        self.hard_rate_limit = None
-        self.rate_limit_delay_max_milliseconds = None
         self.arena_block_size = None
         self.disable_auto_compactions = None
-        self.purge_redundant_kvs_while_flush = None
         self.compaction_style = None
         self.compaction_options_universal = None
         self.max_sequential_skip_in_iterations = None
@@ -867,7 +863,6 @@ class Options(ColumnFamilyOptions):
         self.allow_mmap_reads = None
         self.allow_mmap_writes = None
         self.is_fd_close_on_exec = None
-        self.skip_log_error_on_recovery = None
         self.stats_dump_period_sec = None
         self.advise_random_on_open = None
         self.use_adaptive_mutex = None
@@ -1427,7 +1422,7 @@ class ItemsIterator(BaseIterator):
 #         c_backup_dir = path_to_string(backup_dir)
 #         st = backup.BackupEngine_Open(
 #             env.Env_Default(),
-#             backup.BackupableDBOptions(c_backup_dir),
+#             backup.BackupEngineOptions(c_backup_dir),
 #             cython.address(self.engine))
 
 #         check_status(st)

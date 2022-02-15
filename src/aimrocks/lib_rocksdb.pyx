@@ -55,7 +55,8 @@ import traceback
 import aimrocks.errors as errors
 import weakref
 
-ctypedef const filter_policy.FilterPolicy ConstFilterPolicy
+# pxd defines:
+# ctypedef const filter_policy.FilterPolicy ConstFilterPolicy
 
 cdef extern from "rdb_include/utils.hpp" namespace "py_rocks":
     cdef const Slice* vector_data(vector[Slice]&)
@@ -124,7 +125,6 @@ cdef object string_to_path(string path):
     return PyUnicode_Decode(path.c_str(), path.size(), fs_encoding, "replace")
 
 ## Here comes the stuff for the comparator
-@cython.internal
 cdef class PyComparator(object):
     cdef object get_ob(self):
         return None
@@ -135,10 +135,11 @@ cdef class PyComparator(object):
     cdef set_info_log(self, shared_ptr[logger.Logger] info_log):
         pass
 
-@cython.internal
+
 cdef class PyGenericComparator(PyComparator):
-    cdef comparator.ComparatorWrapper* comparator_ptr
-    cdef object ob
+    # pxd defines:
+    # cdef comparator.ComparatorWrapper* comparator_ptr
+    # cdef object ob
 
     def __cinit__(self, object ob):
         self.comparator_ptr = NULL
@@ -164,17 +165,18 @@ cdef class PyGenericComparator(PyComparator):
     cdef set_info_log(self, shared_ptr[logger.Logger] info_log):
         self.comparator_ptr.set_info_log(info_log)
 
-@cython.internal
+
 cdef class PyBytewiseComparator(PyComparator):
-    cdef const comparator.Comparator* comparator_ptr
+    # pxd defines:
+    # cdef const comparator.Comparator* comparator_ptr
 
     def __cinit__(self):
         self.comparator_ptr = comparator.BytewiseComparator()
 
-    def name(self):
+    cpdef name(self):
         return PyBytes_FromString(self.comparator_ptr.Name())
 
-    def compare(self, a, b):
+    cpdef compare(self, a, b):
         return self.comparator_ptr.Compare(
             bytes_to_slice(a),
             bytes_to_slice(b))
@@ -207,7 +209,6 @@ BytewiseComparator = PyBytewiseComparator
 
 
 ## Here comes the stuff for the filter policy
-@cython.internal
 cdef class PyFilterPolicy(object):
     cdef object get_ob(self):
         return None
@@ -218,10 +219,11 @@ cdef class PyFilterPolicy(object):
     cdef set_info_log(self, shared_ptr[logger.Logger] info_log):
         pass
 
-@cython.internal
+
 cdef class PyGenericFilterPolicy(PyFilterPolicy):
-    cdef shared_ptr[filter_policy.FilterPolicyWrapper] policy
-    cdef object ob
+    # pxd defines:
+    # cdef shared_ptr[filter_policy.FilterPolicyWrapper] policy
+    # cdef object ob
 
     def __cinit__(self, object ob):
         if not isinstance(ob, IFilterPolicy):
@@ -277,17 +279,18 @@ cdef cpp_bool key_may_match_callback(
         logger.Log(log, "Error in key_mach_match callback: %s", <bytes>tb)
         error_msg.assign(<bytes>str(error))
 
-@cython.internal
+
 cdef class PyBloomFilterPolicy(PyFilterPolicy):
-    cdef shared_ptr[ConstFilterPolicy] policy
+    # pxd defines:
+    # cdef shared_ptr[ConstFilterPolicy] policy
 
     def __cinit__(self, int bits_per_key):
         self.policy.reset(filter_policy.NewBloomFilterPolicy(bits_per_key))
 
-    def name(self):
+    cpdef name(self):
         return PyBytes_FromString(self.policy.get().Name())
 
-    def create_filter(self, keys):
+    cpdef create_filter(self, keys):
         cdef string dst
         cdef vector[Slice] c_keys
 
@@ -301,7 +304,7 @@ cdef class PyBloomFilterPolicy(PyFilterPolicy):
 
         return string_to_bytes(dst)
 
-    def key_may_match(self, key, filter_):
+    cpdef key_may_match(self, key, filter_):
         return self.policy.get().KeyMayMatch(
             bytes_to_slice(key),
             bytes_to_slice(filter_))
@@ -318,10 +321,10 @@ BloomFilterPolicy = PyBloomFilterPolicy
 
 
 ## Here comes the stuff for the merge operator
-@cython.internal
 cdef class PyMergeOperator(object):
-    cdef shared_ptr[merge_operator.MergeOperator] merge_op
-    cdef object ob
+    # pxd defines:
+    # cdef shared_ptr[merge_operator.MergeOperator] merge_op
+    # cdef object ob
 
     def __cinit__(self, object ob):
         self.ob = ob
@@ -455,14 +458,14 @@ cdef cpp_bool partial_merge_callback(
 ##############################################
 
 #### Here comes the Cache stuff
-@cython.internal
 cdef class PyCache(object):
     cdef shared_ptr[cache.Cache] get_cache(self):
         return shared_ptr[cache.Cache]()
 
-@cython.internal
+
 cdef class PyLRUCache(PyCache):
-    cdef shared_ptr[cache.Cache] cache_ob
+    # pxd defines:
+    # cdef shared_ptr[cache.Cache] cache_ob
 
     def __cinit__(self, capacity, shard_bits=None):
         if shard_bits is not None:
@@ -477,10 +480,10 @@ LRUCache = PyLRUCache
 ###############################
 
 ### Here comes the stuff for SliceTransform
-@cython.internal
 cdef class PySliceTransform(object):
-    cdef shared_ptr[slice_transform.SliceTransform] transfomer
-    cdef object ob
+    # pxd defines:
+    # cdef shared_ptr[slice_transform.SliceTransform] transfomer
+    # cdef object ob
 
     def __cinit__(self, object ob):
         if not isinstance(ob, ISliceTransform):
@@ -558,10 +561,11 @@ cdef cpp_bool slice_in_range_callback(
         error_msg.assign(<bytes>str(error))
 ###########################################
 
+
 ## Here are the TableFactories
-@cython.internal
 cdef class PyTableFactory(object):
-    cdef shared_ptr[table_factory.TableFactory] factory
+    # pxd defines:
+    # cdef shared_ptr[table_factory.TableFactory] factory
 
     cdef shared_ptr[table_factory.TableFactory] get_table_factory(self):
         return self.factory
@@ -569,8 +573,10 @@ cdef class PyTableFactory(object):
     cdef set_info_log(self, shared_ptr[logger.Logger] info_log):
         pass
 
+
 cdef class BlockBasedTableFactory(PyTableFactory):
-    cdef PyFilterPolicy py_filter_policy
+    # pxd defines:
+    # cdef PyFilterPolicy py_filter_policy
 
     def __init__(self,
             index_type='binary_search',
@@ -651,6 +657,7 @@ cdef class BlockBasedTableFactory(PyTableFactory):
         if self.py_filter_policy is not None:
             self.py_filter_policy.set_info_log(info_log)
 
+
 cdef class PlainTableFactory(PyTableFactory):
     def __init__(
             self,
@@ -682,21 +689,25 @@ cdef class PlainTableFactory(PyTableFactory):
         self.factory.reset( table_factory.NewPlainTableFactory(table_options))
 #############################################
 
+
 ### Here are the MemtableFactories
-@cython.internal
 cdef class PyMemtableFactory(object):
-    cdef shared_ptr[memtablerep.MemTableRepFactory] factory
+    # pxd defines:
+    # cdef shared_ptr[memtablerep.MemTableRepFactory] factory
 
     cdef shared_ptr[memtablerep.MemTableRepFactory] get_memtable_factory(self):
         return self.factory
+
 
 cdef class SkipListMemtableFactory(PyMemtableFactory):
     def __init__(self):
         self.factory.reset(memtablerep.NewSkipListFactory())
 
+
 cdef class VectorMemtableFactory(PyMemtableFactory):
     def __init__(self, count=0):
         self.factory.reset(memtablerep.NewVectorRepFactory(count))
+
 
 cdef class HashSkipListMemtableFactory(PyMemtableFactory):
     def __init__(
@@ -710,6 +721,7 @@ cdef class HashSkipListMemtableFactory(PyMemtableFactory):
                 bucket_count,
                 skiplist_height,
                 skiplist_branching_factor))
+
 
 cdef class HashLinkListMemtableFactory(PyMemtableFactory):
     def __init__(self, bucket_count=50000):
@@ -735,12 +747,13 @@ cdef class CompactionPri(object):
     oldest_smallest_seq_first = u'oldest_smallest_seq_first'
     min_overlapping_ratio = u'min_overlapping_ratio'
 
-@cython.internal
+
 cdef class _ColumnFamilyHandle:
     """ This is an internal class that we will weakref for safety """
-    cdef db.ColumnFamilyHandle* handle
-    cdef object __weakref__
-    cdef object weak_handle
+    # pxd defines:
+    # cdef db.ColumnFamilyHandle* handle
+    # cdef object __weakref__
+    # cdef object weak_handle
 
     def __cinit__(self):
         self.handle = NULL
@@ -771,9 +784,9 @@ cdef class _ColumnFamilyHandle:
 
 cdef class ColumnFamilyHandle:
     """ This represents a ColumnFamilyHandle """
-    cdef object _ref
-    cdef readonly bytes name
-    cdef readonly int id
+    # cdef object _ref
+    # cdef readonly bytes name
+    # cdef readonly int id
 
     def __cinit__(self, weakhandle):
         self._ref = weakhandle
@@ -839,15 +852,14 @@ cdef class ColumnFamilyHandle:
 
 
 cdef class ColumnFamilyOptions(object):
-    cdef options.ColumnFamilyOptions* copts
-    cdef PyComparator py_comparator
-    cdef PyMergeOperator py_merge_operator
-    cdef PySliceTransform py_prefix_extractor
-    cdef PyTableFactory py_table_factory
-    cdef PyMemtableFactory py_memtable_factory
-
-    # Used to protect sharing of Options with many DB-objects
-    cdef cpp_bool in_use
+    # pxd defines:
+    # cdef options.ColumnFamilyOptions* copts
+    # cdef PyComparator py_comparator
+    # cdef PyMergeOperator py_merge_operator
+    # cdef PySliceTransform py_prefix_extractor
+    # cdef PyTableFactory py_table_factory
+    # cdef PyMemtableFactory py_memtable_factory
+    # cdef cpp_bool in_use
 
     def __cinit__(self):
         self.copts = NULL
@@ -1045,24 +1057,6 @@ cdef class ColumnFamilyOptions(object):
         def __set__(self, value):
             self.copts.max_bytes_for_level_multiplier_additional = value
 
-    property soft_rate_limit:
-        def __get__(self):
-            return self.copts.soft_rate_limit
-        def __set__(self, value):
-            self.copts.soft_rate_limit = value
-
-    property hard_rate_limit:
-        def __get__(self):
-            return self.copts.hard_rate_limit
-        def __set__(self, value):
-            self.copts.hard_rate_limit = value
-
-    property rate_limit_delay_max_milliseconds:
-        def __get__(self):
-            return self.copts.rate_limit_delay_max_milliseconds
-        def __set__(self, value):
-            self.copts.rate_limit_delay_max_milliseconds = value
-
     property arena_block_size:
         def __get__(self):
             return self.copts.arena_block_size
@@ -1074,12 +1068,6 @@ cdef class ColumnFamilyOptions(object):
             return self.copts.disable_auto_compactions
         def __set__(self, value):
             self.copts.disable_auto_compactions = value
-
-    property purge_redundant_kvs_while_flush:
-        def __get__(self):
-            return self.copts.purge_redundant_kvs_while_flush
-        def __set__(self, value):
-            self.copts.purge_redundant_kvs_while_flush = value
 
     # FIXME: remove to util/options_helper.h
     #  property allow_os_buffer:
@@ -1239,8 +1227,9 @@ cdef class ColumnFamilyOptions(object):
 
 
 cdef class Options(ColumnFamilyOptions):
-    cdef options.Options* opts
-    cdef PyCache py_row_cache
+    # pxd defines:
+    # cdef options.Options* opts
+    # cdef PyCache py_row_cache
 
     def __cinit__(self):
         # Destroy the existing ColumnFamilyOptions()
@@ -1405,12 +1394,6 @@ cdef class Options(ColumnFamilyOptions):
         def __set__(self, value):
             self.opts.is_fd_close_on_exec = value
 
-    property skip_log_error_on_recovery:
-        def __get__(self):
-            return self.opts.skip_log_error_on_recovery
-        def __set__(self, value):
-            self.opts.skip_log_error_on_recovery = value
-
     property stats_dump_period_sec:
         def __get__(self):
             return self.opts.stats_dump_period_sec
@@ -1470,19 +1453,13 @@ cdef class Options(ColumnFamilyOptions):
             return self.opts.skip_stats_update_on_db_open
         def __set__(self, value):
             self.opts.skip_stats_update_on_db_open = value
-# Forward declaration
-cdef class Snapshot
 
-cdef class KeysIterator
-cdef class ValuesIterator
-cdef class ItemsIterator
-cdef class ReversedIterator
 
-# Forward declaration
-cdef class WriteBatchIterator
 
+# TODO inherit from writableDB
 cdef class WriteBatch(object):
-    cdef db.WriteBatch* batch
+    # pxd defines:
+    # cdef db.WriteBatch* batch
 
     def __cinit__(self, data=None):
         self.batch = NULL
@@ -1495,63 +1472,62 @@ cdef class WriteBatch(object):
         if not self.batch == NULL:
             del self.batch
 
-    def put(self, key, value):
+    cpdef void put(self, bytes key, bytes value, ColumnFamilyHandle column_family = None):
         cdef db.ColumnFamilyHandle* cf_handle = NULL
-        if isinstance(key, tuple):
-            column_family, key = key
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
         # nullptr is default family
         self.batch.Put(cf_handle, bytes_to_slice(key), bytes_to_slice(value))
 
-    def merge(self, key, value):
+    cpdef void merge(self, bytes key, bytes value, ColumnFamilyHandle column_family = None):
         cdef db.ColumnFamilyHandle* cf_handle = NULL
-        if isinstance(key, tuple):
-            column_family, key = key
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
         # nullptr is default family
         self.batch.Merge(cf_handle, bytes_to_slice(key), bytes_to_slice(value))
 
-    def delete(self, key):
+    # Here delete is with def for backwards compatibility.
+    # Cython has a bug that doesn't allow a method with name `delete`
+    # so we have to use a different name for `cpdef`-ed ones.
+    def delete(self, bytes key, ColumnFamilyHandle column_family = None):
+        return self.delete_single(key, column_family)
+
+    cpdef void delete_single(self, bytes key, ColumnFamilyHandle column_family = None):
         cdef db.ColumnFamilyHandle* cf_handle = NULL
-        if isinstance(key, tuple):
-            column_family, key = key
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
         # nullptr is default family
         self.batch.Delete(cf_handle, bytes_to_slice(key))
 
-    def delete_range(self, key):
+    cpdef void delete_range(self, bytes begin_key, bytes end_key, ColumnFamilyHandle column_family = None):
         cdef db.ColumnFamilyHandle* cf_handle = NULL
-        if isinstance(key, tuple):
-            if len(key) == 3:
-                column_family, begin_key, end_key = key
-                cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
-            else:
-                begin_key, end_key = key
-        else:
-            raise ValueError(f"delete range key {key} is not valid")
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
+
         # nullptr is default family
         self.batch.DeleteRange(cf_handle, bytes_to_slice(begin_key), bytes_to_slice(end_key))
 
-    def clear(self):
+    cpdef void clear(self):
         self.batch.Clear()
 
-    def data(self):
+    cpdef data(self):
         return string_to_bytes(self.batch.Data())
 
-    def count(self):
+    cpdef int count(self):
         return self.batch.Count()
 
     def __iter__(self):
         return WriteBatchIterator(self)
 
 
-@cython.internal
 cdef class WriteBatchIterator(object):
     # Need a reference to the WriteBatch.
     # The BatchItems are only pointers to the memory in WriteBatch.
-    cdef WriteBatch batch
-    cdef vector[db.BatchItem] items
-    cdef size_t pos
+
+    # pxd defines:
+    # cdef WriteBatch batch
+    # cdef vector[db.BatchItem] items
+    # cdef size_t pos
 
     def __init__(self, WriteBatch batch):
         cdef Status st
@@ -1596,12 +1572,51 @@ cdef class WriteBatchIterator(object):
         self.pos += 1
         return ret
 
+
+# TODO add writableDB, ReadablewritableDB
+# TODO add WriteBatch iniherited from writableDB
+
+
+cdef class IDB(object):
+    # Cython requires to implement methods in the class definition
+    # even for abstract classes.
+
+    # TODO move write option arguments to a separate class
+    cpdef void put(self, bytes key, bytes value, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef void delete_single(self, bytes key, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef void delete_range(self, bytes begin_key, bytes end_key, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef void flush(self):
+        pass
+    cpdef void flush_wal(self, cpp_bool sync = False):
+        pass
+    cpdef void merge(self, bytes key, bytes value, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef void write(self, WriteBatch batch, cpp_bool sync = False, cpp_bool disable_wal = False):
+        pass
+    cpdef get(self, bytes key, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef multi_get(self, keys):
+        pass
+    cpdef key_may_exist(self, bytes key, cpp_bool fetch = False, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef Iterator iterkeys(self, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef Iterator itervalues(self, ColumnFamilyHandle column_family = None):
+        pass
+    cpdef Iterator iteritems(self, ColumnFamilyHandle column_family = None):
+        pass
+
+
 @cython.no_gc_clear
-cdef class DB(object):
-    cdef Options opts
-    cdef db.DB* db
-    cdef list cf_handles
-    cdef list cf_options
+cdef class DB(IDB):
+    # pxd defines:
+    # cdef Options opts
+    # cdef db.DB* db
+    # cdef list cf_handles
+    # cdef list cf_options
 
     def __cinit__(self, db_name, Options opts, dict column_families=None, read_only=False):
         cdef Status st
@@ -1708,9 +1723,9 @@ cdef class DB(object):
     def __dealloc__(self):
         self.close()
 
-    def close(self):
+    cpdef void close(self):
         cdef ColumnFamilyOptions copts
-        if not self.db == NULL:
+        if self.db != NULL:
             # We have to make sure we delete the handles so rocksdb doesn't
             # assert when we delete the db
             self.cf_handles.clear()
@@ -1729,79 +1744,65 @@ cdef class DB(object):
     def column_families(self):
         return [handle.weakref for handle in self.cf_handles]
 
-    def get_column_family(self, bytes name):
+    cpdef get_column_family(self, bytes name):
         for handle in self.cf_handles:
             if handle.name == name:
                 return handle.weakref
 
-    def put(self, key, value, sync=False, disable_wal=False):
+    cpdef void put(self, bytes key, bytes value, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
         cdef Status st
         cdef options.WriteOptions opts
         opts.sync = sync
         opts.disableWAL = disable_wal
 
-        if isinstance(key, tuple):
-            column_family, key = key
-        else:
-            column_family = None
-
         cdef Slice c_key = bytes_to_slice(key)
         cdef Slice c_value = bytes_to_slice(value)
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         with nogil:
             st = self.db.Put(opts, cf_handle, c_key, c_value)
         check_status(st)
 
-    def delete(self, key, sync=False, disable_wal=False):
+    def delete(self, bytes key, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
+        self.delete_single(key, sync=sync, disable_wal=disable_wal, column_family=column_family)
+
+    cpdef void delete_single(self, bytes key, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
         cdef Status st
         cdef options.WriteOptions opts
         opts.sync = sync
         opts.disableWAL = disable_wal
 
-        if isinstance(key, tuple):
-            column_family, key = key
-        else:
-            column_family = None
-
         cdef Slice c_key = bytes_to_slice(key)
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         with nogil:
             st = self.db.Delete(opts, cf_handle, c_key)
         check_status(st)
 
-    def delete_range(self, key, sync=False, disable_wal=False):
+    cpdef void delete_range(self, bytes begin_key, bytes end_key, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
         cdef Status st
         cdef options.WriteOptions opts
         opts.sync = sync
         opts.disableWAL = disable_wal
 
-        if isinstance(key, tuple):
-            if len(key) == 3:
-                column_family, begin_key, end_key = key
-            else:
-                column_family = None
-                begin_key, end_key = key
-        else:
-            raise ValueError(f"delete range key {key} is not valid")
-
         cdef Slice c_begin_key = bytes_to_slice(begin_key)
         cdef Slice c_end_key = bytes_to_slice(end_key)
 
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         with nogil:
             st = self.db.DeleteRange(opts, cf_handle, c_begin_key, c_end_key)
         check_status(st)
 
-    def flush(self):
+    cpdef void flush(self):
         cdef Status st
         cdef FlushOptions options
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
@@ -1810,35 +1811,30 @@ cdef class DB(object):
             st = self.db.Flush(options, cf_handle)
         check_status(st)
 
-    def flush_wal(self, sync=False):
+    cpdef void flush_wal(self, cpp_bool sync = False):
         cdef Status st
         cdef cpp_bool c_sync = sync
         with nogil:
             st = self.db.FlushWAL(c_sync)
         check_status(st)
 
-    def merge(self, key, value, sync=False, disable_wal=False):
+    cpdef void merge(self, bytes key, bytes value, cpp_bool sync = False, cpp_bool disable_wal = False, ColumnFamilyHandle column_family = None):
         cdef Status st
         cdef options.WriteOptions opts
         opts.sync = sync
         opts.disableWAL = disable_wal
 
-        if isinstance(key, tuple):
-            column_family, key = key
-        else:
-            column_family = None
-
         cdef Slice c_key = bytes_to_slice(key)
         cdef Slice c_value = bytes_to_slice(value)
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         with nogil:
             st = self.db.Merge(opts, cf_handle, c_key, c_value)
         check_status(st)
 
-    def write(self, WriteBatch batch, sync=False, disable_wal=False):
+    cpdef void write(self, WriteBatch batch, cpp_bool sync = False, cpp_bool disable_wal = False):
         cdef Status st
         cdef options.WriteOptions opts
         opts.sync = sync
@@ -1848,22 +1844,15 @@ cdef class DB(object):
             st = self.db.Write(opts, batch.batch)
         check_status(st)
 
-    def get(self, key, *args, **kwargs):
+    cpdef get(self, bytes key, ColumnFamilyHandle column_family = None):
         cdef string res
         cdef Status st
         cdef options.ReadOptions opts
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
-
-        if isinstance(key, tuple):
-            column_family, key = key
-        else:
-            column_family = None
-
         cdef Slice c_key = bytes_to_slice(key)
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         with nogil:
             st = self.db.Get(opts, cf_handle, c_key, cython.address(res))
@@ -1875,7 +1864,7 @@ cdef class DB(object):
         else:
             check_status(st)
 
-    def multi_get(self, keys, *args, **kwargs):
+    cpdef multi_get(self, keys):
         cdef vector[string] values
         values.resize(len(keys))
 
@@ -1892,7 +1881,6 @@ cdef class DB(object):
             cf_handles.push_back(cf_handle)
 
         cdef options.ReadOptions opts
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
 
         cdef vector[Status] res
         with nogil:
@@ -1913,7 +1901,7 @@ cdef class DB(object):
 
         return ret_dict
 
-    def key_may_exist(self, key, fetch=False, *args, **kwargs):
+    cpdef key_may_exist(self, bytes key, cpp_bool fetch = False, ColumnFamilyHandle column_family = None):
         cdef string value
         cdef cpp_bool value_found
         cdef cpp_bool exists
@@ -1921,10 +1909,8 @@ cdef class DB(object):
         cdef Slice c_key
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
-        if isinstance(key, tuple):
-            column_family, key = key
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         c_key = bytes_to_slice(key)
         exists = False
@@ -1956,28 +1942,25 @@ cdef class DB(object):
 
             return (exists, None)
 
-    def iterkeys(self, ColumnFamilyHandle column_family=None, *args, **kwargs):
+    cpdef Iterator iterkeys(self, ColumnFamilyHandle column_family = None):
         cdef options.ReadOptions opts
         cdef KeysIterator it
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
+        if column_family is not None:
             cf_handle = column_family.get_handle()
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
-        it = KeysIterator(self, column_family)
+        it = KeysIterator(self)
 
         with nogil:
             it.ptr = self.db.NewIterator(opts, cf_handle)
         return it
 
-    def itervalues(self, ColumnFamilyHandle column_family=None, *args, **kwargs):
+    cpdef Iterator itervalues(self, ColumnFamilyHandle column_family = None):
         cdef options.ReadOptions opts
         cdef ValuesIterator it
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
+        if column_family is not None:
             cf_handle = column_family.get_handle()
-
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
 
         it = ValuesIterator(self)
 
@@ -1985,21 +1968,21 @@ cdef class DB(object):
             it.ptr = self.db.NewIterator(opts, cf_handle)
         return it
 
-    def iteritems(self, ColumnFamilyHandle column_family=None, *args, **kwargs):
+    cpdef Iterator iteritems(self, ColumnFamilyHandle column_family = None):
         cdef options.ReadOptions opts
         cdef ItemsIterator it
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
+        if column_family is not None:
             cf_handle = column_family.get_handle()
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
 
-        it = ItemsIterator(self, column_family)
+        it = ItemsIterator.__new__(ItemsIterator)
+        it.db = self
 
         with nogil:
             it.ptr = self.db.NewIterator(opts, cf_handle)
         return it
 
-    def iterskeys(self, column_families, *args, **kwargs):
+    cpdef iterskeys(self, column_families):
         cdef vector[db.Iterator*] iters
         iters.resize(len(column_families))
         cdef options.ReadOptions opts
@@ -2012,7 +1995,6 @@ cdef class DB(object):
             cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
             cf_handles.push_back(cf_handle)
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
         with nogil:
             self.db.NewIterators(opts, cf_handles, &iters)
 
@@ -2024,7 +2006,7 @@ cdef class DB(object):
             ret.append(it)
         return ret
 
-    def itersvalues(self, column_families, *args, **kwargs):
+    cpdef itersvalues(self, column_families):
         cdef vector[db.Iterator*] iters
         iters.resize(len(column_families))
         cdef options.ReadOptions opts
@@ -2037,7 +2019,6 @@ cdef class DB(object):
             cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
             cf_handles.push_back(cf_handle)
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
         with nogil:
             self.db.NewIterators(opts, cf_handles, &iters)
 
@@ -2048,7 +2029,7 @@ cdef class DB(object):
             ret.append(it)
         return ret
 
-    def iterskeys(self, column_families, *args, **kwargs):
+    cpdef itersitems(self, column_families):
         cdef vector[db.Iterator*] iters
         iters.resize(len(column_families))
         cdef options.ReadOptions opts
@@ -2061,7 +2042,6 @@ cdef class DB(object):
             cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
             cf_handles.push_back(cf_handle)
 
-        opts = self.build_read_opts(self.__parse_read_opts(*args, **kwargs))
         with nogil:
             self.db.NewIterators(opts, cf_handles, &iters)
 
@@ -2074,10 +2054,10 @@ cdef class DB(object):
             ret.append(it)
         return ret
 
-    def snapshot(self):
+    cpdef snapshot(self):
         return Snapshot(self)
 
-    def get_property(self, prop, ColumnFamilyHandle column_family=None):
+    cpdef get_property(self, prop, ColumnFamilyHandle column_family = None):
         cdef string value
         cdef Slice c_prop = bytes_to_slice(prop)
         cdef cpp_bool ret = False
@@ -2093,7 +2073,7 @@ cdef class DB(object):
         else:
             return None
 
-    def get_live_files_metadata(self):
+    cpdef get_live_files_metadata(self):
         cdef vector[db.LiveFileMetaData] metadata
 
         with nogil:
@@ -2114,13 +2094,21 @@ cdef class DB(object):
 
         return ret
 
-    def compact_range(self, begin=None, end=None, ColumnFamilyHandle column_family=None, **py_options):
+    # TODO replace arguments with a single CompactRangeOptions cython wrapper
+    cpdef void compact_range(self,
+        bytes begin=None,
+        bytes end=None,
+        cpp_bool change_level = False,
+        int target_level = -1,
+        str bottommost_level_compaction = 'if_compaction_filter',
+        ColumnFamilyHandle column_family = None
+    ):
         cdef options.CompactRangeOptions c_options
 
-        c_options.change_level = py_options.get('change_level', False)
-        c_options.target_level = py_options.get('target_level', -1)
+        c_options.change_level = change_level
+        c_options.target_level = target_level
 
-        blc = py_options.get('bottommost_level_compaction', 'if_compaction_filter')
+        blc = bottommost_level_compaction
         if blc == 'skip':
             c_options.bottommost_level_compaction = options.blc_skip
         elif blc == 'if_compaction_filter':
@@ -2149,8 +2137,8 @@ cdef class DB(object):
             end_ptr = cython.address(end_val)
 
         cdef db.ColumnFamilyHandle* cf_handle = self.db.DefaultColumnFamily()
-        if column_family:
-            cf_handle = (<ColumnFamilyHandle?>column_family).get_handle()
+        if column_family is not None:
+            cf_handle = column_family.get_handle()
 
         st = self.db.CompactRange(c_options, cf_handle, begin_ptr, end_ptr)
         check_status(st)
@@ -2185,7 +2173,7 @@ cdef class DB(object):
         def __get__(self):
             return self.opts
 
-    def create_column_family(self, bytes name, ColumnFamilyOptions copts):
+    cpdef create_column_family(self, bytes name, ColumnFamilyOptions copts):
         cdef db.ColumnFamilyHandle* cf_handle
         cdef Status st
         cdef string c_name = name
@@ -2208,7 +2196,7 @@ cdef class DB(object):
         self.cf_options.append(copts)
         return handle.weakref
 
-    def drop_column_family(self, ColumnFamilyHandle weak_handle not None):
+    cpdef void drop_column_family(self, ColumnFamilyHandle weak_handle):
         cdef db.ColumnFamilyHandle* cf_handle
         cdef ColumnFamilyOptions copts
         cdef Status st
@@ -2228,7 +2216,7 @@ cdef class DB(object):
             copts.in_use = False
 
 
-def repair_db(db_name, Options opts):
+cpdef repair_db(db_name, Options opts):
     cdef Status st
     cdef string db_path
 
@@ -2237,7 +2225,7 @@ def repair_db(db_name, Options opts):
     check_status(st)
 
 
-def list_column_families(db_name, Options opts):
+cpdef list_column_families(db_name, Options opts):
     cdef Status st
     cdef string db_path
     cdef vector[string] column_families
@@ -2251,10 +2239,10 @@ def list_column_families(db_name, Options opts):
 
 
 @cython.no_gc_clear
-@cython.internal
 cdef class Snapshot(object):
-    cdef const snapshot.Snapshot* ptr
-    cdef DB db
+    # pxd defines:
+    # cdef const snapshot.Snapshot* ptr
+    # cdef DB db
 
     def __cinit__(self, DB db):
         self.db = db
@@ -2268,13 +2256,40 @@ cdef class Snapshot(object):
                 self.db.db.ReleaseSnapshot(self.ptr)
 
 
-@cython.internal
-cdef class BaseIterator(object):
-    cdef iterator.Iterator* ptr
-    cdef DB db
-    cdef ColumnFamilyHandle handle
+cdef class Iterator:
+    def __cinit__(self):
+        self._current_value = None
 
-    def __cinit__(self, DB db, ColumnFamilyHandle handle = None):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        item = self.next()
+        if item is None:
+            raise StopIteration
+        return item
+
+    # NOTE Iterator interface defines sentinel value of `None` so it can't
+    # yield None values. However, one can still overwrite cpython's __next__ instead.
+    cpdef object next(self):
+        return None
+
+    cpdef object get(self):
+        if self._current_value is None:
+            self._current_value = self.next()
+        return self._current_value
+
+    cpdef void skip(self):
+        self._current_value = None
+
+
+cdef class BaseIterator(Iterator):
+    # pxd defines:
+    # cdef iterator.Iterator* ptr
+    # cdef DB db
+    # cdef ColumnFamilyHandle handle
+
+    def __cinit__(self, DB db = None, ColumnFamilyHandle handle = None):
         self.db = db
         self.ptr = NULL
         self.handle = handle
@@ -2283,12 +2298,9 @@ cdef class BaseIterator(object):
         if not self.ptr == NULL:
             del self.ptr
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    cpdef object next(self):
         if not self.ptr.Valid():
-            raise StopIteration()
+            return None
 
         cdef object ret = self.get_ob()
         with nogil:
@@ -2296,33 +2308,40 @@ cdef class BaseIterator(object):
         check_status(self.ptr.status())
         return ret
 
-    def get(self):
+    cpdef object get(self):
         if not self.ptr.Valid():
             raise ValueError()
 
         cdef object ret = self.get_ob()
         return ret
 
+    cpdef void skip(self):
+        if not self.ptr.Valid():
+            raise ValueError()
+        with nogil:
+            self.ptr.Next()
+        check_status(self.ptr.status())
+
     def __reversed__(self):
         return ReversedIterator(self)
 
-    cpdef seek_to_first(self):
+    cpdef void seek_to_first(self):
         with nogil:
             self.ptr.SeekToFirst()
         check_status(self.ptr.status())
 
-    cpdef seek_to_last(self):
+    cpdef void seek_to_last(self):
         with nogil:
             self.ptr.SeekToLast()
         check_status(self.ptr.status())
 
-    cpdef seek(self, key):
+    cpdef void seek(self, bytes key):
         cdef Slice c_key = bytes_to_slice(key)
         with nogil:
             self.ptr.Seek(c_key)
         check_status(self.ptr.status())
 
-    cpdef seek_for_prev(self, key):
+    cpdef void seek_for_prev(self, bytes key):
         cdef Slice c_key = bytes_to_slice(key)
         with nogil:
             self.ptr.SeekForPrev(c_key)
@@ -2331,18 +2350,16 @@ cdef class BaseIterator(object):
     cdef object get_ob(self):
         return None
 
-@cython.internal
+
 cdef class KeysIterator(BaseIterator):
     cdef object get_ob(self):
         cdef Slice c_key
         with nogil:
             c_key = self.ptr.key()
         check_status(self.ptr.status())
-        if self.handle:
-            return self.handle, slice_to_bytes(c_key)
         return slice_to_bytes(c_key)
 
-@cython.internal
+
 cdef class ValuesIterator(BaseIterator):
     cdef object get_ob(self):
         cdef Slice c_value
@@ -2351,7 +2368,7 @@ cdef class ValuesIterator(BaseIterator):
         check_status(self.ptr.status())
         return slice_to_bytes(c_value)
 
-@cython.internal
+
 cdef class ItemsIterator(BaseIterator):
     cdef object get_ob(self):
         cdef Slice c_key
@@ -2360,30 +2377,29 @@ cdef class ItemsIterator(BaseIterator):
             c_key = self.ptr.key()
             c_value = self.ptr.value()
         check_status(self.ptr.status())
-        if self.handle:
-            return ((self.handle, slice_to_bytes(c_key)), slice_to_bytes(c_value))
         return (slice_to_bytes(c_key), slice_to_bytes(c_value))
 
-@cython.internal
+
 cdef class ReversedIterator(object):
-    cdef BaseIterator it
+    # pxd defines:
+    # cdef BaseIterator it
 
     def __cinit__(self, BaseIterator it):
         self.it = it
 
-    def seek_to_first(self):
+    cpdef void seek_to_first(self):
         self.it.seek_to_first()
 
-    def seek_to_last(self):
+    cpdef void seek_to_last(self):
         self.it.seek_to_last()
 
-    def seek(self, key):
+    cpdef void seek(self, bytes key):
         self.it.seek(key)
 
-    def seek_for_prev(self, key):
+    cpdef void seek_for_prev(self, bytes key):
         self.it.seek_for_prev(key)
 
-    def get(self):
+    cpdef object get(self):
         return self.it.get()
 
     def __iter__(self):
@@ -2402,8 +2418,10 @@ cdef class ReversedIterator(object):
         check_status(self.it.ptr.status())
         return ret
 
+
 cdef class BackupEngine(object):
-    cdef backup.BackupEngine* engine
+    # pxd defines:
+    # cdef backup.BackupEngine* engine
 
     def  __cinit__(self, backup_dir):
         cdef Status st
@@ -2413,7 +2431,7 @@ cdef class BackupEngine(object):
         c_backup_dir = path_to_string(backup_dir)
         st = backup.BackupEngine_Open(
             env.Env_Default(),
-            backup.BackupableDBOptions(c_backup_dir),
+            backup.BackupEngineOptions(c_backup_dir),
             cython.address(self.engine))
 
         check_status(st)
@@ -2423,7 +2441,7 @@ cdef class BackupEngine(object):
             with nogil:
                 del self.engine
 
-    def create_backup(self, DB db, flush_before_backup=False):
+    cpdef create_backup(self, DB db, flush_before_backup=False):
         cdef Status st
         cdef cpp_bool c_flush_before_backup
 
@@ -2433,7 +2451,7 @@ cdef class BackupEngine(object):
             st = self.engine.CreateNewBackup(db.db, c_flush_before_backup)
         check_status(st)
 
-    def restore_backup(self, backup_id, db_dir, wal_dir):
+    cpdef restore_backup(self, backup_id, db_dir, wal_dir):
         cdef Status st
         cdef backup.BackupID c_backup_id
         cdef string c_db_dir
@@ -2451,7 +2469,7 @@ cdef class BackupEngine(object):
 
         check_status(st)
 
-    def restore_latest_backup(self, db_dir, wal_dir):
+    cpdef restore_latest_backup(self, db_dir, wal_dir):
         cdef Status st
         cdef string c_db_dir
         cdef string c_wal_dir
@@ -2464,11 +2482,11 @@ cdef class BackupEngine(object):
 
         check_status(st)
 
-    def stop_backup(self):
+    cpdef stop_backup(self):
         with nogil:
             self.engine.StopBackup()
 
-    def purge_old_backups(self, num_backups_to_keep):
+    cpdef purge_old_backups(self, num_backups_to_keep):
         cdef Status st
         cdef uint32_t c_num_backups_to_keep
 
@@ -2478,7 +2496,7 @@ cdef class BackupEngine(object):
             st = self.engine.PurgeOldBackups(c_num_backups_to_keep)
         check_status(st)
 
-    def delete_backup(self, backup_id):
+    cpdef delete_backup(self, backup_id):
         cdef Status st
         cdef backup.BackupID c_backup_id
 
@@ -2489,7 +2507,7 @@ cdef class BackupEngine(object):
 
         check_status(st)
 
-    def get_backup_info(self):
+    cpdef get_backup_info(self):
         cdef vector[backup.BackupInfo] backup_info
 
         with nogil:

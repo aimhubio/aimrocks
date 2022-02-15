@@ -92,7 +92,6 @@ cdef extern from "rocksdb/options.h" namespace "rocksdb":
         cpp_bool use_direct_io_for_flush_and_compaction
         cpp_bool allow_fallocate
         cpp_bool is_fd_close_on_exec
-        cpp_bool skip_log_error_on_recovery
         unsigned int stats_dump_period_sec
         cpp_bool advise_random_on_open
         size_t db_write_buffer_size
@@ -134,13 +133,9 @@ cdef extern from "rocksdb/options.h" namespace "rocksdb":
         int source_compaction_factor
         int max_grandparent_overlap_factor
         cpp_bool disableDataSync
-        double soft_rate_limit
-        double hard_rate_limit
-        unsigned int rate_limit_delay_max_milliseconds
         size_t arena_block_size
         # TODO: PrepareForBulkLoad()
         cpp_bool disable_auto_compactions
-        cpp_bool purge_redundant_kvs_while_flush
         cpp_bool allow_os_buffer
         cpp_bool verify_checksums_in_compaction
         CompactionStyle compaction_style
