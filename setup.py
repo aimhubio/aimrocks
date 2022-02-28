@@ -27,9 +27,32 @@ aimrocks_extra_compile_args = [
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
 
+
 third_party_install_dir = '/usr/local'
 third_party_deps = ['rocksdb', 'snappy', 'bz2', 'z', 'lz4', 'zstd']
 third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.a'.format(lib)) for lib in third_party_deps]
+
+third_party_headers = ['/usr/local/include/rocksdb']
+
+local_include_dir = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), 'src/aimrocks/include')
+)
+
+for path in third_party_headers:
+    copy_tree(path, local_include_dir, preserve_symlinks=False, update=True)
+
+
+exts = [
+    Extension(
+        'aimrocks.lib_rocksdb',
+        ['src/aimrocks/lib_rocksdb.pyx'],
+        extra_compile_args=aimrocks_extra_compile_args,
+        language='c++',
+        extra_objects=third_party_libs,
+        include_dirs=[local_include_dir],
+    )
+]
+
 
 setup(
     name="aimrocks",
@@ -38,15 +61,8 @@ setup(
     setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
     packages=find_packages('./src'),
     package_dir={'': 'src'},
-    ext_modules=cythonize([
-        Extension(
-            'aimrocks.lib_rocksdb',
-            ['src/aimrocks/lib_rocksdb.pyx'],
-            extra_compile_args=aimrocks_extra_compile_args,
-            language='c++',
-            extra_objects=third_party_libs
-        )
-    ]),
+    package_data={'aimrocks': ['src/*']},
+    ext_modules=cythonize(exts),
     include_package_data=True,
     zip_safe=False,
 )
