@@ -4,6 +4,7 @@ import platform
 from setuptools import setup
 from setuptools import find_packages
 from setuptools import Extension
+from distutils.dir_util import copy_tree
 
 
 try:
@@ -34,6 +35,9 @@ third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.a'.forma
 
 third_party_headers = ['/usr/local/include/rocksdb']
 
+# We define a local include directory to store all the required public headers.
+# The third party headers are copied into this directory to enable binding with
+# the precompiled aimrocks binaries without third-party dependencies.
 local_include_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks/include')
 )
