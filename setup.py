@@ -42,8 +42,11 @@ local_include_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks/include')
 )
 
-for path in third_party_headers:
-    copy_tree(path, local_include_dir, preserve_symlinks=False, update=True)
+for source in third_party_headers:
+    basename = os.path.basename(source)
+    destination = os.path.join(local_include_dir, basename)
+    copy_tree(source, destination,
+              preserve_symlinks=False, update=True)
 
 
 exts = [
@@ -60,7 +63,7 @@ exts = [
 
 setup(
     name="aimrocks",
-    version='0.1.1rc2',
+    version='0.1.1rc3',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
     packages=find_packages('./src'),
