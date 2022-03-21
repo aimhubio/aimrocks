@@ -1,2 +1,2 @@
 include requirements.txt
-recursive-include src *.hpp *.cpp *.pxd *.pyx *.h *.c *.C *.cxx *.hxx *.pyi
+recursive-include src *.hpp *.cpp *.pxd *.pyx *.h *.c *.C *.cxx *.hxx *.pyi *.so*

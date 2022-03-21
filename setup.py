@@ -1,10 +1,12 @@
 import os
 import sys
 import platform
+from glob import glob
 from setuptools import setup
 from setuptools import find_packages
 from setuptools import Extension
 from distutils.dir_util import copy_tree
+from distutils.file_util import copy_file
 
 
 try:
@@ -23,17 +25,19 @@ aimrocks_extra_compile_args = [
     '-Wconversion',
     '-fno-strict-aliasing',
     '-fno-rtti',
+    '-fPIC',
 ]
 
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
 
-
-third_party_install_dir = '/usr/local'
+third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
 third_party_deps = ['rocksdb', 'snappy', 'bz2', 'z', 'lz4', 'zstd']
-third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.a'.format(lib)) for lib in third_party_deps]
+third_party_libs = [os.path.join(third_party_install_dir, 'lib', 'lib{}.so'.format(lib)) for lib in third_party_deps]
 
-third_party_headers = ['/usr/local/include/rocksdb']
+third_party_libs = [lib for lib in glob(os.path.join(third_party_install_dir, 'lib', 'lib*.so*'))]
+
+third_party_headers = [os.path.join(third_party_install_dir, 'include/rocksdb')]
 
 # We define a local include directory to store all the required public headers.
 # The third party headers are copied into this directory to enable binding with
@@ -41,6 +45,12 @@ third_party_headers = ['/usr/local/include/rocksdb']
 local_include_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks/include')
 )
+local_lib_dir = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), 'src/aimrocks')
+)
+for source in third_party_libs:
+    print('copying', source, local_lib_dir)
+    copy_file(source, local_lib_dir)
 
 for source in third_party_headers:
     basename = os.path.basename(source)
@@ -55,8 +65,9 @@ exts = [
         ['src/aimrocks/lib_rocksdb.pyx'],
         extra_compile_args=aimrocks_extra_compile_args,
         language='c++',
-        extra_objects=third_party_libs,
         include_dirs=[local_include_dir],
+        library_dirs=[local_lib_dir],
+        libraries=['rocksdb'],
     )
 ]
 
