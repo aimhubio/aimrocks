@@ -20,9 +20,9 @@ then
   fi
 fi
 
-/opt/python/cp35-cp35m/bin/python -m pip install cmake
-ln -s /opt/python/cp35-cp35m/bin/cmake /usr/bin/cmake
-PATH=/opt/python/cp35-cp35m/bin:$PATH
+/opt/python/cp37-cp37m/bin/python -m pip install cmake
+ln -s /opt/python/cp37-cp37m/bin/cmake /usr/bin/cmake
+PATH=/opt/python/cp37-cp37m/bin:$PATH
 
 
 echo "Installing 3rd party libraries."
