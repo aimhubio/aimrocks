@@ -5,6 +5,7 @@ cd /opt
 mkdir -p aimrocks_deps
 export AIM_DEP_DIR=/opt/aimrocks_deps
 cd aimrocks_deps/
+cp /opt/aimrocks/docker/*.sh .
 
 mkdir -p lib
 mkdir -p include
