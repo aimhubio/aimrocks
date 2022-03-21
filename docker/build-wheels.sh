@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd /opt
-cp -r /opt/aimrocks_ /opt/aimrocks
 
 mkdir -p aimrocks_deps
 export AIM_DEP_DIR=/opt/aimrocks_deps
