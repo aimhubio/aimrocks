@@ -9,9 +9,6 @@ RUN /opt/python/cp37-cp37m/bin/python -m pip install cmake && \
 WORKDIR /opt/aimrocks_deps/
 
 
-
-FROM build_base AS build_deps
-
 COPY docker/build-zlib.sh ./
 RUN ./build-zlib.sh
 
