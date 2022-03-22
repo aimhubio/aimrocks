@@ -129,6 +129,8 @@ jobs:
           PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
           strip -S librocksdb.dylib
           PORTABLE=1 make DEBUG_LEVEL=0 install-shared
+          cp librocksdb.6.29.3.dylib /usr/local/lib/librocksdb.dylib
+          rm /usr/local/lib/librocksdb.*.dylib
           cd ..
           rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
 
