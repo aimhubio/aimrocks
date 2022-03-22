@@ -4,6 +4,8 @@ export AIM_DEP_DIR=/opt/aimrocks_deps
 
 cd /opt/aimrocks
 
+ls -lhatr dist
+
 for whl in dist/*.whl
 do
   LD_LIBRARY_PATH=$AIM_DEP_DIR/lib:$LD_LIBRARY_PATH \

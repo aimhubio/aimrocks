@@ -53,7 +53,6 @@ jobs:
 
       - name: Auditing wheels for manylinux1_x86_64
         run: |
-         ls -lhatr dist/ && \
          mkdir -p manylinux_dist/ && \
          docker run --rm \
          --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
@@ -83,7 +82,6 @@ jobs:
 
       - name: Auditing wheels for manylinux2010_x86_64
         run: |
-         ls -lhatr dist/ && \
          mkdir -p manylinux_dist/ && \
          docker run --rm \
          --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
@@ -113,7 +111,6 @@ jobs:
 
       - name: Auditing wheels for manylinux_2_24_x86_64
         run: |
-         ls -lhatr dist/ && \
          mkdir -p manylinux_dist/ && \
          docker run --rm \
          --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
