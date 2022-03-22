@@ -94,14 +94,14 @@ jobs:
           rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
 
           # bzip2
-          curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
-          tar zxvf bzip2-1.0.8.tar.gz
-          cd bzip2-1.0.8/
-          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make -f Makefile-libbz2_so CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make -n install
-          cd ../
-          rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
+          # curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
+          # tar zxvf bzip2-1.0.8.tar.gz
+          # cd bzip2-1.0.8/
+          # make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+          # make -f Makefile-libbz2_so CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+          # make -n install
+          # cd ../
+          # rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
 
           # snappy
           curl -L https://github.com/google/snappy/archive/1.1.8.tar.gz -o snappy-1.1.8.tar.gz
