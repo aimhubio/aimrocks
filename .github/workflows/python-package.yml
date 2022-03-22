@@ -116,14 +116,14 @@ jobs:
           rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
           # rocksdb
-          curl -L https://github.com/facebook/rocksdb/archive/6.28.fb.tar.gz -o rocksdb-6.28.fb.tar.gz
-          tar zxvf rocksdb-6.28.fb.tar.gz
-          cd rocksdb-6.28.fb
+          curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
+          tar zxvf rocksdb-6.29.fb.tar.gz
+          cd rocksdb-6.29.fb
           PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
-          strip -S librocksdb.so
+          strip -S librocksdb.dylib
           PORTABLE=1 make DEBUG_LEVEL=0 install-shared
           cd ..
-          rm -rf rocksdb-6.28.fb rocksdb-6.28.fb.tar.gz
+          rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
 
       - name: Checkout sources
         uses: actions/checkout@v2
