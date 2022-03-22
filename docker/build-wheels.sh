@@ -1,14 +1,6 @@
 #!/bin/bash
 
-cd /opt
-
-mkdir -p aimrocks_deps
 export AIM_DEP_DIR=/opt/aimrocks_deps
-cd aimrocks_deps/
-cp /opt/aimrocks/docker/*.sh .
-
-mkdir -p lib
-mkdir -p include
 
 # check OS version
 if [[ -f /etc/redhat-release ]]
@@ -20,22 +12,6 @@ then
   fi
 fi
 
-/opt/python/cp37-cp37m/bin/python -m pip install cmake
-ln -s /opt/python/cp37-cp37m/bin/cmake /usr/bin/cmake
-PATH=/opt/python/cp37-cp37m/bin:$PATH
-
-
-echo "Installing 3rd party libraries."
-
-./build-zlib.sh
-./build-bzip2.sh
-./build-zstd.sh
-./build-lz4.sh
-./build-snappy.sh
-./build-rocksdb.sh
-
-
-echo "3rd party libraries install. SUCCESS"
 
 cd /opt/aimrocks
 
@@ -53,3 +29,13 @@ do
   $PYTHON_ROOT/bin/python -m build
   rm -rf build
 done
+
+
+for whl in $(ls ./linux_dist)
+do
+  LD_LIBRARY_PATH=/opt/aimrocks_deps/lib:$LD_LIBRARY_PATH auditwheel repair linux_dist/${whl} --wheel-dir manylinux_dist
+done
+rm -rf linux_dist
+
+echo "python wheels build. SUCCESS"
+echo "DONE"
