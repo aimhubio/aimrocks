@@ -31,14 +31,33 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
 
-      - name: Build dependencies for manylinux1_x86_64
-        run: |
-         docker build --build-arg FROM=quay.io/pypa/manylinux1_x86_64 . -t aimhubio/aimrocks:manylinux1_x86_64
 
-      - name: Build bdist wheels for manylinux1_x86_64
+      - name: Building dependencies for manylinux1_x86_64
         run: |
-         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks aimhubio/aimrocks:manylinux1_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
+         docker build \
+        --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+        --target deps .
 
+      - name: Building rocksdb for manylinux1_x86_64
+        run: |
+         docker build \
+        --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+        --target rocksdb .
+
+      - name: Building wheels for manylinux1_x86_64
+        run: |
+         docker build \
+        --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+        --target wheels . \
+        -t aimhubio/aimrocks:manylinux1_x86_64
+
+      - name: Auditing wheels for manylinux1_x86_64
+        run: |
+         mkdir -p manylinux_dist/ && \
+         docker run --rm \
+         --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist
+         aimhubio/aimrocks:manylinux1_x86_64 \
+         bash -e /opt/aimrocks/docker/audit-wheels.sh
 
       - name: Build dependencies for manylinux2010_x86_64
         run: |
