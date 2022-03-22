@@ -14,9 +14,9 @@ ln -s /opt/python/cp37-cp37m/bin/cmake /usr/bin/cmake
 PATH=/opt/python/cp37-cp37m/bin:$PATH
 
 # Building third party dependencies
-/opts/aimrocks/docker/build-zlib.sh
-/opts/aimrocks/docker/build-bzip2.sh
-/opts/aimrocks/docker/build-zstd.sh
-/opts/aimrocks/docker/build-lz4.sh
-/opts/aimrocks/docker/build-snappy.sh
-/opts/aimrocks/docker/build-rocksdb.sh
+/opt/aimrocks/docker/build-zlib.sh
+/opt/aimrocks/docker/build-bzip2.sh
+/opt/aimrocks/docker/build-zstd.sh
+/opt/aimrocks/docker/build-lz4.sh
+/opt/aimrocks/docker/build-snappy.sh
+/opt/aimrocks/docker/build-rocksdb.sh
