@@ -29,13 +29,3 @@ do
   $PYTHON_ROOT/bin/python -m build
   rm -rf build
 done
-
-
-for whl in dist/*.whl
-do
-  LD_LIBRARY_PATH=/opt/aimrocks_deps/lib:$LD_LIBRARY_PATH auditwheel repair ${whl} --wheel-dir manylinux_dist
-done
-rm -rf dist
-
-echo "python wheels build. SUCCESS"
-echo "DONE"
