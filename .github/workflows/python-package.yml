@@ -5,7 +5,11 @@ on: workflow_dispatch
 jobs:
   linux-dist:
     runs-on: ubuntu-latest
-    name: Linux wheels build (using Docker)
+    strategy:
+      fail-fast: false
+      matrix:
+        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
+    name: Linux wheels build (using Docker) ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
         run: |
@@ -23,100 +27,39 @@ jobs:
 
       - name: Pull Docker Images
         run: |
-         docker pull quay.io/pypa/manylinux1_x86_64
-         docker pull quay.io/pypa/manylinux2010_x86_64
-         docker pull quay.io/pypa/manylinux_2_24_x86_64
+         docker pull quay.io/pypa/${{ matrix.manylinux-version }}
 
       - uses: satackey/action-docker-layer-caching@v0.0.11
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
 
 
-      - name: Building dependencies for manylinux1_x86_64
+      - name: Building dependencies for ${{ matrix.manylinux-version }}
         run: |
          docker build \
-         --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
          --target deps .
 
-      - name: Building rocksdb for manylinux1_x86_64
+      - name: Building rocksdb for ${{ matrix.manylinux-version }}
         run: |
          docker build \
-         --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
          --target rocksdb .
 
-      - name: Building wheels for manylinux1_x86_64
+      - name: Building wheels for ${{ matrix.manylinux-version }}
         run: |
          docker build \
-         --build-arg FROM=quay.io/pypa/manylinux1_x86_64 \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
          --target wheels . \
-         -t aimhubio/aimrocks:manylinux1_x86_64
+         -t aimhubio/aimrocks:${{ matrix.manylinux-version }}
 
-      - name: Auditing wheels for manylinux1_x86_64
+      - name: Auditing wheels for ${{ matrix.manylinux-version }}
         run: |
          mkdir -p manylinux_dist/ && \
          docker run --rm \
          --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
-         aimhubio/aimrocks:manylinux1_x86_64 \
+         aimhubio/aimrocks:${{ matrix.manylinux-version }} \
          bash -e /opt/aimrocks/docker/audit-wheels.sh
-
-
-
-      - name: Building dependencies for manylinux2010_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux2010_x86_64 \
-         --target deps .
-
-      - name: Building rocksdb for manylinux2010_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux2010_x86_64 \
-         --target rocksdb .
-
-      - name: Building wheels for manylinux2010_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux2010_x86_64 \
-         --target wheels . \
-         -t aimhubio/aimrocks:manylinux2010_x86_64
-
-      - name: Auditing wheels for manylinux2010_x86_64
-        run: |
-         mkdir -p manylinux_dist/ && \
-         docker run --rm \
-         --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
-         aimhubio/aimrocks:manylinux2010_x86_64 \
-         bash -e /opt/aimrocks/docker/audit-wheels.sh
-
-
-
-      - name: Building dependencies for manylinux_2_24_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux_2_24_x86_64 \
-         --target deps .
-
-      - name: Building rocksdb for manylinux_2_24_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux_2_24_x86_64 \
-         --target rocksdb .
-
-      - name: Building wheels for manylinux_2_24_x86_64
-        run: |
-         docker build \
-         --build-arg FROM=quay.io/pypa/manylinux_2_24_x86_64 \
-         --target wheels . \
-         -t aimhubio/aimrocks:manylinux_2_24_x86_64
-
-      - name: Auditing wheels for manylinux_2_24_x86_64
-        run: |
-         mkdir -p manylinux_dist/ && \
-         docker run --rm \
-         --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
-         aimhubio/aimrocks:manylinux_2_24_x86_64 \
-         bash -e /opt/aimrocks/docker/audit-wheels.sh
-
 
       - name: Install dev dependencies
         run: |
