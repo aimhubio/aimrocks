@@ -48,9 +48,12 @@ local_include_dir = os.path.abspath(
 local_lib_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks')
 )
-for source in third_party_libs:
-    print('copying', source, local_lib_dir)
-    copy_file(source, local_lib_dir)
+
+# Auditwheel will handle linux wheels
+if platform.system() == 'Darwin':
+    for source in third_party_libs:
+        print('copying', source, local_lib_dir)
+        copy_file(source, local_lib_dir)
 
 for source in third_party_headers:
     basename = os.path.basename(source)
@@ -74,7 +77,7 @@ exts = [
 
 setup(
     name="aimrocks",
-    version='0.1.3a1',
+    version='0.1.3a2',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
     packages=find_packages('./src'),
