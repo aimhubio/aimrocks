@@ -80,8 +80,13 @@ jobs:
         os: [ 'macos-latest' ]
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
     steps:
-      - name: Install third party deps (macOS)
-        if: runner.os == 'macOS'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Building ZLib
         run: |
           # zlib
           curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
@@ -93,6 +98,8 @@ jobs:
           cd ../
           rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
 
+      - name: Building BZip2
+        run: |
           # bzip2
           # curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
           # tar zxvf bzip2-1.0.8.tar.gz
@@ -103,6 +110,8 @@ jobs:
           # cd ../
           # rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
 
+      - name: Building Snappy
+        run: |
           # snappy
           curl -L https://github.com/google/snappy/archive/1.1.8.tar.gz -o snappy-1.1.8.tar.gz
           tar zxvf snappy-1.1.8.tar.gz
@@ -115,6 +124,8 @@ jobs:
           cd ../..
           rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
+      - name: Building RocksDB
+        run: |
           # rocksdb
           curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
           tar zxvf rocksdb-6.29.fb.tar.gz
@@ -127,12 +138,6 @@ jobs:
 
       - name: Checkout sources
         uses: actions/checkout@v2
-
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
 
       - name: Install dev dependencies
         run: |
