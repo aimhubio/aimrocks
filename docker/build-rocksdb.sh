@@ -17,7 +17,7 @@ then
   cp /opt/aimrocks_deps/rocksdb_sched.patch .
   patch port/port_posix.cc rocksdb_sched.patch
 fi
-PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j24
+PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
 PORTABLE=1 make PREFIX="../" DESTDIR="./" DEBUG_LEVEL=0 install-shared
 strip --strip-debug librocksdb.so.6.28.2
 cp librocksdb.so.6.28.2 ../lib/librocksdb.so

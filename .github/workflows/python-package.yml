@@ -84,18 +84,22 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           # zlib
-          curl http://www.zlib.net/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
+          curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
           tar -xzf zlib-1.2.11.tar.gz
           cd zlib-1.2.11/
-          ./configure && make install
+          ./configure
+          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+          make install
           cd ../
           rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
 
           # bzip2
           curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
-          tar -xzf bzip2-1.0.8.tar.gz
+          tar zxvf bzip2-1.0.8.tar.gz
           cd bzip2-1.0.8/
-          sudo make install
+          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+          make -f Makefile-libbz2_so CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+          make -n install
           cd ../
           rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
 
@@ -105,7 +109,9 @@ jobs:
           cd snappy-1.1.8
           mkdir build
           cd build
-          cmake CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON .. && make && make install
+          cmake CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_SHARED_LIBS=ON ..
+          make
+          make install
           cd ../..
           rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
 
@@ -113,7 +119,11 @@ jobs:
           curl -L https://github.com/facebook/rocksdb/archive/6.28.fb.tar.gz -o rocksdb-6.28.fb.tar.gz
           tar zxvf rocksdb-6.28.fb.tar.gz
           cd rocksdb-6.28.fb
-          make -j2 static_lib && strip -S librocksdb.a && make install-static
+          PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
+          strip --strip-debug librocksdb.so
+          PORTABLE=1 make DEBUG_LEVEL=0 install-shared
+          cd ..
+          rm -rf rocksdb-6.28.fb rocksdb-6.28.fb.tar.gz
 
       - name: Checkout sources
         uses: actions/checkout@v2
