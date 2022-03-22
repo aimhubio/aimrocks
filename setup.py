@@ -36,8 +36,10 @@ third_party_deps = ['rocksdb', 'snappy', 'bz2', 'z', 'lz4', 'zstd']
 
 third_party_libs = [
     lib for lib in glob(os.path.join(third_party_install_dir, 'lib', 'lib*.so*'))
+    if any(dep in lib for dep in third_party_deps)
 ] + [
     lib for lib in glob(os.path.join(third_party_install_dir, 'lib', 'lib*.dylib*'))
+    if any(dep in lib for dep in third_party_deps)
 ]
 
 
