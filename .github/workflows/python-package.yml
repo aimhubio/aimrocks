@@ -80,7 +80,7 @@ jobs:
         os: [ 'macos-latest' ]
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
     env:
-      MACOSX_DEPLOYMENT_TARGET: 10.9
+      MACOSX_DEPLOYMENT_TARGET: 10.14
     steps:
       - name: Building ZLib
         run: |
