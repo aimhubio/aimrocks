@@ -21,13 +21,23 @@ jobs:
           python-version: '3.9'
           architecture: x64
 
+      - name: Pull manylinux1_x86_64
+        run: |
+         docker pull quay.io/pypa/manylinux1_x86_64
+         docker pull quay.io/pypa/manylinux2010_x86_64
+         docker pull quay.io/pypa/manylinux_2_24_x86_64
+
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+
       - name: Build dependencies for manylinux1_x86_64
         run: |
-         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux1_x86_64 bash -e /opt/aimrocks/docker/build-deps.sh
+         docker build --build-arg FROM=quay.io/pypa/manylinux1_x86_64 . -t aimhubio/aimrocks:manylinux1_x86_64
 
       - name: Build bdist wheels for manylinux1_x86_64
         run: |
-         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks quay.io/pypa/manylinux1_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
+         docker run --mount type=bind,source=$PWD,target=/opt/aimrocks aimhubio/aimrocks:manylinux1_x86_64 bash -e /opt/aimrocks/docker/build-wheels.sh
 
       - name: Build dependencies for manylinux2010_x86_64
         run: |

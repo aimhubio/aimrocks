@@ -31,11 +31,11 @@ do
 done
 
 
-for whl in $(ls ./linux_dist)
+for whl in dist/*.whl
 do
-  LD_LIBRARY_PATH=/opt/aimrocks_deps/lib:$LD_LIBRARY_PATH auditwheel repair linux_dist/${whl} --wheel-dir manylinux_dist
+  LD_LIBRARY_PATH=/opt/aimrocks_deps/lib:$LD_LIBRARY_PATH auditwheel repair ${whl} --wheel-dir manylinux_dist
 done
-rm -rf linux_dist
+rm -rf dist
 
 echo "python wheels build. SUCCESS"
 echo "DONE"
