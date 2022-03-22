@@ -26,6 +26,3 @@ COPY deps/rocksdb_sched.patch /opt/aimrocks_deps/
 RUN ./build-rocksdb.sh
 
 COPY . /opt/aimrocks
-
-COPY docker/build-wheels.sh ./
-RUN ./build-wheels.sh
