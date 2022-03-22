@@ -82,12 +82,6 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.9
     steps:
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
-
       - name: Building ZLib
         run: |
           # zlib
@@ -140,6 +134,12 @@ jobs:
 
       - name: Checkout sources
         uses: actions/checkout@v2
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
 
       - name: Install dev dependencies
         run: |
