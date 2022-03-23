@@ -40,7 +40,7 @@ COPY docker/build-wheels.sh ./
 RUN ./build-wheels.sh
 
 
-FROM rocksdb AS audit
+FROM wheels AS audit
 
 COPY docker/audit-wheels.sh ./
 RUN ./audit-wheels.sh
