@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 export AIM_DEP_DIR=/opt/aimrocks_deps
 

@@ -55,9 +55,10 @@ local_lib_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks')
 )
 
-for source in third_party_libs:
-    print('copying', source, local_lib_dir)
-    copy_file(source, local_lib_dir)
+if platform.system() == 'Darwin':
+    for source in third_party_libs:
+        print('copying', source, local_lib_dir)
+        copy_file(source, local_lib_dir)
 
 for source in third_party_headers:
     basename = os.path.basename(source)

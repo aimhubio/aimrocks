@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 export AIM_DEP_DIR=/opt/aimrocks_deps
 
@@ -24,8 +25,7 @@ fi
 
 for python_version in "${python_versions[@]}"
 do
-  PYTHON_ROOT=/opt/python/${python_version}/
-  $PYTHON_ROOT/bin/python -m pip install Cython==3.0.0a9
-  $PYTHON_ROOT/bin/python -m build
+  /opt/python/${python_version}/bin/python -m pip install Cython==3.0.0a9
+  /opt/python/${python_version}/bin/python setup.py bdist_wheel
   rm -rf build
 done
