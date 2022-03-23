@@ -34,11 +34,12 @@ if platform.system() == 'Darwin':
 third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
 third_party_deps = ['rocksdb', 'snappy', 'bz2', 'z', 'lz4', 'zstd']
 
+third_party_lib_dir = os.path.join(third_party_install_dir, 'lib')
 third_party_libs = [
-    lib for lib in glob(os.path.join(third_party_install_dir, 'lib', 'lib*.so*'))
+    lib for lib in glob(os.path.join(third_party_lib_dir, 'lib*.so*'))
     if any(dep in lib for dep in third_party_deps)
 ] + [
-    lib for lib in glob(os.path.join(third_party_install_dir, 'lib', 'lib*.dylib*'))
+    lib for lib in glob(os.path.join(third_party_lib_dir, 'lib*.dylib*'))
     if any(dep in lib for dep in third_party_deps)
 ]
 
@@ -74,7 +75,7 @@ exts = [
         extra_compile_args=aimrocks_extra_compile_args,
         language='c++',
         include_dirs=[local_include_dir],
-        library_dirs=[local_lib_dir],
+        library_dirs=[third_party_lib_dir],
         libraries=['rocksdb'],
     )
 ]

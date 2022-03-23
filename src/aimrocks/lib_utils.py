@@ -36,7 +36,7 @@ def get_lib_file_paths():
     ]
 
 def load_libs():
-    if platform.system() == 'Darwin':
+    if platform.system() != 'Darwin':
         return
     for path in get_lib_file_paths():
         ctypes.CDLL(path)
