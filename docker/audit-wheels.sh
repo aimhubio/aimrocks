@@ -7,10 +7,5 @@ cd /opt/aimrocks
 
 ls -lhatr dist
 
-for whl in dist/*.whl
-do
-  LD_LIBRARY_PATH=$AIM_DEP_DIR/lib:$LD_LIBRARY_PATH \
-  auditwheel repair ${whl} \
-  --wheel-dir manylinux_dist
-done
+cp -r dist/*.shl manylinux_dist
 rm -rf dist

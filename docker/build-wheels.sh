@@ -25,7 +25,6 @@ fi
 
 for python_version in "${python_versions[@]}"
 do
-  /opt/python/${python_version}/bin/python -m pip install Cython==3.0.0a9
-  /opt/python/${python_version}/bin/python setup.py bdist_wheel
+  /opt/python/${python_version}/bin/python -m build
   rm -rf build
 done
