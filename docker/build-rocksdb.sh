@@ -19,6 +19,8 @@ then
 fi
 PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j24
 strip --strip-debug librocksdb.so
-PORTABLE=1 make PREFIX="../" DESTDIR="./" DEBUG_LEVEL=0 install-shared
+cp librocksdb.so.6.29 ../lib/
+ln -s librocksdb.so.6.29 ../lib/librocksdb.so
+PORTABLE=1 make PREFIX="../" DESTDIR="./" DEBUG_LEVEL=0 install-headers
 cd ..
 rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
