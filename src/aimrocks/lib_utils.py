@@ -19,22 +19,32 @@ def get_lib_dir():
 def get_libs():
 
     return [
-        'rocksdb'
+        'snappy',
+        'rocksdb',
     ]
 
-def get_lib_filename(name):
+def get_lib_filename(name, lib_dir):
     if platform.system() == 'Darwin':
-        return f'lib{name}.dylib'
+        pattern = f'lib{name}*.dylib'
     else:
-        return f'lib{name}.so'
+        pattern = f'lib{name}*.so*'
 
-def get_lib_file_paths():
+    files = glob(os.path.join(lib_dir, pattern))
+    assert len(files) == 1
+    return os.path.basename(files[0])
+
+def get_lib_filenames():
     local_lib_dir = get_lib_dir()
     return [
-        os.path.join(local_lib_dir, get_lib_filename(name))
+        get_lib_filename(name, local_lib_dir)
         for name in get_libs()
     ]
 
+def load_lib(filename):
+    local_lib_dir = get_lib_dir()
+    path = os.path.join(local_lib_dir, filename)
+    ctypes.CDLL(path)
+
 def load_libs():
-    for path in get_lib_file_paths():
-        ctypes.CDLL(path)
+    for filename in get_lib_filenames():
+        load_lib(filename)
