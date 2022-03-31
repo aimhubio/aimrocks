@@ -41,6 +41,7 @@ def get_lib_filenames():
 def load_lib(filename):
     local_lib_dir = get_lib_dir()
     path = os.path.join(local_lib_dir, filename)
+    print(f'Loading runtime library from {path}')
     ctypes.CDLL(path)
 
 def load_libs():
