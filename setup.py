@@ -28,8 +28,13 @@ aimrocks_extra_compile_args = [
     '-fPIC',
 ]
 
+aimrocks_extra_link_args = []
+
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
+    aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path/"]
+else:
+    aimrocks_extra_link_args += ["-Wl,-rpath,$ORIGIN"]
 
 third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
 third_party_deps = ['rocksdb']
@@ -66,17 +71,19 @@ exts = [
         'aimrocks.lib_rocksdb',
         ['src/aimrocks/lib_rocksdb.pyx'],
         extra_compile_args=aimrocks_extra_compile_args,
+        extra_link_args=aimrocks_extra_link_args,
         language='c++',
         include_dirs=[local_include_dir],
         library_dirs=[third_party_lib_dir],
         libraries=['rocksdb'],
+        runtime_library_dirs=['@loader_path', '@loader_path/..']
     )
 ]
 
 
 setup(
     name="aimrocks",
-    version='0.1.3a10',
+    version='0.1.3a11',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython>=3.0.0a9'],
     packages=find_packages('./src'),
