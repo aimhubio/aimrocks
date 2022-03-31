@@ -177,6 +177,7 @@ jobs:
 
       - name: Build bdist wheel
         run: |
+          export AIM_DEP_DIR=$PWD
           # python setup.py bdist_wheel -d dist --plat-name=macosx_12_0_x86_64
           # python setup.py bdist_wheel -d dist --plat-name=macosx_11_0_x86_64
           python setup.py bdist_wheel -d dist --plat-name=macosx_10_14_x86_64

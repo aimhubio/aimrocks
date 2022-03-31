@@ -32,17 +32,10 @@ if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
 
 third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
-third_party_deps = ['rocksdb', 'snappy', 'bz2', 'z', 'lz4', 'zstd']
+third_party_deps = ['rocksdb']
 
 third_party_lib_dir = os.path.join(third_party_install_dir, 'lib')
-third_party_libs = [
-    lib for lib in glob(os.path.join(third_party_lib_dir, 'lib*.so*'))
-    if any(dep in lib for dep in third_party_deps)
-] + [
-    lib for lib in glob(os.path.join(third_party_lib_dir, 'lib*.dylib*'))
-    if any(dep in lib for dep in third_party_deps)
-]
-
+third_party_libs = glob(os.path.join(third_party_lib_dir, 'librocksdb.*'))
 
 third_party_headers = [os.path.join(third_party_install_dir, 'include/rocksdb')]
 
@@ -58,8 +51,6 @@ local_lib_dir = os.path.abspath(
 
 for source in third_party_libs:
     print('copying', source, local_lib_dir)
-    if os.path.islink(source):
-        continue
     copy_file(source, local_lib_dir)
 
 for source in third_party_headers:
@@ -86,7 +77,7 @@ setup(
     name="aimrocks",
     version='0.1.3a10',
     description='RocksDB wrapper implemented in Cython.',
-    setup_requires=['setuptools>=25', 'Cython==3.0.0a9'],
+    setup_requires=['setuptools>=25', 'Cython>=3.0.0a9'],
     packages=find_packages('./src'),
     package_dir={'': 'src'},
     package_data={'aimrocks': ['src/*']},
