@@ -158,6 +158,13 @@ jobs:
         run: |
           rm $AIM_DEP_DIR/lib/lib*.dylib
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        continue-on-error: true
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
+
       - name: Building RocksDB
         run: |
           # rocksdb
@@ -203,7 +210,7 @@ jobs:
         run: |
           python -m pip show -f aimrocks
 
-      - name: Setup tmate session
+      - name: Setup post-build tmate session
         uses: mxschmitt/action-tmate@v3
         continue-on-error: true
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
