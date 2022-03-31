@@ -155,10 +155,10 @@ jobs:
           curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
           tar zxvf rocksdb-6.29.fb.tar.gz
           cd rocksdb-6.29.fb
-          LIBRARY_PATH=$PWD/../lib  PORTABLE=1 make shared_lib EXTRA_CXXFLAGS="-fPIC -I../include" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
+          LIBRARY_PATH=$PWD/../lib PORTABLE=1 make shared_lib PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I../include" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
           strip -S librocksdb.dylib
-          cp librocksdb.6.29.*.dylib ../lib/librocksdb.dylib
-          PORTABLE=1 make DEBUG_LEVEL=0 install-shared
+          cp librocksdb.dylib ../lib/librocksdb.dylib
+          PORTABLE=1 make DEBUG_LEVEL=0 install-headers
           cd ..
           rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
 
