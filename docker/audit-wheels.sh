@@ -9,7 +9,7 @@ LIBS_BUNDLED=`ls ${AIM_DEP_DIR}/lib/ \
 | sed -r 's/^(lib.*?\.so)\.*?$/\1/g' \
 | uniq \
 | paste -s -d','`
-LD_LIBRARY_PATH=$AIM_DEP_DIR/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$AIM_DEP_DIR/lib:$LD_LIBRARY_PATH
 
 INTERNAL_PYTHON=/opt/python/cp38-cp38/bin/python
 

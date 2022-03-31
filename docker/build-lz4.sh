@@ -4,6 +4,5 @@ tar zxvf lz4-1.9.3.tar.gz
 cd lz4-1.9.3
 make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
 make PREFIX=.. install
-cp lib/liblz4.so.1.9.3 ../lib/liblz4.so
 cd ..
 rm -rf lz4-1.9.3 lz4-1.9.3.tar.gz

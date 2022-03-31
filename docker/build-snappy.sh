@@ -4,9 +4,9 @@ tar zxvf snappy-1.1.8.tar.gz
 cd snappy-1.1.8
 mkdir build
 cd build
-cmake CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_SHARED_LIBS=ON ..
+cmake -DCMAKE_INSTALL_PREFIX="../.." CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
 make
-make PREFIX=.. install
+make install
 cp libsnappy.so.1 ../../lib/libsnappy.so.1
 ln -s libsnappy.so.1 ../../lib/libsnappy.so
 cd ../..

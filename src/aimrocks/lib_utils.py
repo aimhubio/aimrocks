@@ -17,9 +17,7 @@ def get_lib_dir():
     return path
 
 def get_libs():
-
     return [
-        'snappy',
         'rocksdb',
     ]
 
