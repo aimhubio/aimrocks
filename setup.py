@@ -49,8 +49,9 @@ local_lib_dir = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src/aimrocks')
 )
 
+print('third party libs detected:', third_party_libs)
 for source in third_party_libs:
-    print('copying', source, local_lib_dir)
+    print('copying third party lib', source, local_lib_dir)
     copy_file(source, local_lib_dir)
 
 for source in third_party_headers:
