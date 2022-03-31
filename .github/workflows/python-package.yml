@@ -158,6 +158,15 @@ jobs:
         run: |
           rm $AIM_DEP_DIR/lib/lib*.dylib
 
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         continue-on-error: true
@@ -183,14 +192,6 @@ jobs:
         run: |
           find $AIM_DEP_DIR
 
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
 
       - name: Install dev dependencies
         run: |
