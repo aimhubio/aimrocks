@@ -9,6 +9,8 @@ then
   fi
 fi
 
+rm -rf lib/lib*.so*
+
 curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
 tar zxvf rocksdb-6.29.fb.tar.gz
 cd rocksdb-6.29.fb
