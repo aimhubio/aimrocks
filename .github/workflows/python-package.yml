@@ -85,7 +85,7 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.14
-      AIM_DEP_DIR: '/opt/aimrocks_deps'
+      AIM_DEP_DIR: '/tmp/aimrocks_deps'
     steps:
       - name: Preparing Build Dir for Dependencies
         run: |
