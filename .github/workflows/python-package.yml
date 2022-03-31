@@ -197,6 +197,9 @@ jobs:
         run: |
           python -m pip show -f aimrocks
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Test bdist
         run: |
           python -m pytest tests
