@@ -159,7 +159,7 @@ jobs:
           curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
           tar zxvf rocksdb-6.29.fb.tar.gz
           cd rocksdb-6.29.fb
-          LIBRARY_PATH=$PWD/../lib PORTABLE=1 make shared_lib PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I../include" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j4
+          LIBRARY_PATH=$PWD/../lib PORTABLE=1 make shared_lib PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I../include" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j6
           strip -S librocksdb.dylib
           cp librocksdb.dylib ../lib/librocksdb.dylib
           PORTABLE=1 make PREFIX="$PWD/.." DEBUG_LEVEL=0 install-headers
@@ -192,6 +192,7 @@ jobs:
       - name: Test bdist
         run: |
           python -m pip install dist/*.whl
+        run: |
           python -m pytest tests
           python -m pip uninstall -y aimrocks
 
