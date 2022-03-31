@@ -137,7 +137,7 @@ jobs:
 
       - name: Remove shared objects
         run: |
-          rm lib/lib*.so* lib/lib*.dylib
+          rm lib/lib*.dylib
 
       - name: Building RocksDB
         run: |
