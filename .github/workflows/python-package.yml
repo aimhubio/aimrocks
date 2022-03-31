@@ -33,10 +33,7 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
         with:
-          key: aimrocks-manylinux-build-${{ matrix.manylinux-version }}
-          restore-keys: |
-            aimrocks-manylinux-build-
-
+          key: aimrocks-cython-manylinux-build-${{ matrix.manylinux-version }}
 
       - name: Building dependencies for ${{ matrix.manylinux-version }}
         run: |
