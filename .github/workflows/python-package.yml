@@ -88,32 +88,26 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.14
-      AIM_DEP_DIR: '/tmp/aimrocks_deps'
     steps:
-      - name: Preparing Build Dir for Dependencies
-        run: |
-          mkdir -p $AIM_DEP_DIR
       - name: Building ZLib
         run: |
-          cd $AIM_DEP_DIR
           curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
           tar -xzf zlib-1.2.11.tar.gz
           cd zlib-1.2.11/
           ./configure
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install prefix=..
+          make install
           cd ../
           rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
 
       - name: Building BZip2
         run: |
-          cd $AIM_DEP_DIR
           curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
           tar zxvf bzip2-1.0.8.tar.gz
           cd bzip2-1.0.8/
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
           # make -f Makefile-libbz2_so CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install PREFIX=..
+          make install
           cd ../
           rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
 
@@ -124,10 +118,9 @@ jobs:
           tar zxvf lz4-1.9.3.tar.gz
           cd lz4-1.9.3
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make PREFIX=$PWD/.. install
+          make install
           cd ..
           rm -rf lz4-1.9.3 lz4-1.9.3.tar.gz
-
 
       - name: Building Snappy
         run: |
@@ -137,7 +130,7 @@ jobs:
           cd snappy-1.1.8
           mkdir build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../.. CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
+          cmake CFLAGS="-fPIC" CXXFLAGS="fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
           make
           make install
           cd ../..
@@ -150,13 +143,9 @@ jobs:
           tar zxvf zstd-1.1.3.tar.gz
           cd zstd-1.1.3
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install PREFIX=$PWD/..
+          make install
           cd ..
           rm -rf zstd-1.1.3 zstd-1.1.3.tar.gz
-
-      - name: Remove shared objects
-        run: |
-          rm $AIM_DEP_DIR/lib/lib*.dylib
 
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -181,10 +170,9 @@ jobs:
           curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
           tar zxvf rocksdb-6.29.fb.tar.gz
           cd rocksdb-6.29.fb
-          LIBRARY_PATH=$PWD/../lib PORTABLE=1 make shared_lib PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I../include" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j6
-          strip -S librocksdb.dylib
-          cp librocksdb.dylib ../lib/librocksdb.dylib
-          PORTABLE=1 make PREFIX="$PWD/.." DEBUG_LEVEL=0 install-headers
+          PORTABLE=1 make static_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j6
+          strip -S librocksdb.a
+          PORTABLE=1 make DEBUG_LEVEL=0 install-static
           cd ..
           rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
 
