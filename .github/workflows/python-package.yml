@@ -171,7 +171,7 @@ jobs:
           curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
           tar zxvf rocksdb-6.29.fb.tar.gz
           cd rocksdb-6.29.fb
-          PORTABLE=1 make static_lib EXTRA_CXXFLAGS="-fPIC" EXTRA_CFLAGS="-fPIC" USE_RTTI=0 DEBUG_LEVEL=0 -j6
+          PORTABLE=1 make static_lib EXTRA_CXXFLAGS="-fPIC -static" USE_RTTI=0 DEBUG_LEVEL=0 -j6
           strip -S librocksdb.a
           PORTABLE=1 sudo make DEBUG_LEVEL=0 install-static
           cd ..
