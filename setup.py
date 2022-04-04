@@ -32,7 +32,7 @@ aimrocks_extra_link_args = []
 
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
-    aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path/"]
+    aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path/librocksdb.dylib"]
 else:
     aimrocks_extra_link_args += ["-Wl,-rpath,$ORIGIN"]
 
@@ -76,14 +76,13 @@ exts = [
         include_dirs=[local_include_dir],
         library_dirs=[third_party_lib_dir],
         libraries=['rocksdb'],
-        runtime_library_dirs=['@loader_path', '@loader_path/..']
     )
 ]
 
 
 setup(
     name="aimrocks",
-    version='0.1.3a12',
+    version='0.1.3a13',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython>=3.0.0a9'],
     packages=find_packages('./src'),
