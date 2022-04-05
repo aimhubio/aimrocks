@@ -32,7 +32,7 @@ aimrocks_extra_link_args = []
 
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
-    aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path/librocksdb.dylib"]
+    aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path"]
 else:
     aimrocks_extra_link_args += ["-Wl,-rpath,$ORIGIN"]
 
