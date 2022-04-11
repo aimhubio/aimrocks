@@ -1,5 +1,8 @@
 import os
+import ctypes
+import platform
 from glob import glob
+
 
 def get_include_dir():
     dirname = os.path.dirname(__file__)
@@ -14,9 +17,34 @@ def get_lib_dir():
     return path
 
 def get_libs():
-    lib_dir = get_lib_dir()
-    paths = glob(os.path.join(lib_dir, 'lib*.so'))
     return [
-        os.path.basename(path)[3:-3] # strip `lib` and `.so`
-        for path in paths
+        'rocksdb',
     ]
+
+def get_lib_filename(name, lib_dir):
+    if platform.system() == 'Darwin':
+        pattern = f'lib{name}*.dylib'
+    else:
+        pattern = f'lib{name}*.so*'
+
+    files = glob(os.path.join(lib_dir, pattern))
+    assert len(files) == 1
+    return os.path.basename(files[0])
+
+def get_lib_filenames():
+    local_lib_dir = get_lib_dir()
+    return [
+        get_lib_filename(name, local_lib_dir)
+        for name in get_libs()
+    ]
+
+def load_lib(filename):
+    local_lib_dir = get_lib_dir()
+    path = os.path.join(local_lib_dir, filename)
+    print(f'Loading runtime library from {path}')
+    ctypes.CDLL(path)
+
+def load_libs():
+    return # temporary
+    for filename in get_lib_filenames():
+        load_lib(filename)
