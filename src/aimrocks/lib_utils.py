@@ -45,6 +45,5 @@ def load_lib(filename):
     ctypes.CDLL(path)
 
 def load_libs():
-    return # temporary
     for filename in get_lib_filenames():
         load_lib(filename)
