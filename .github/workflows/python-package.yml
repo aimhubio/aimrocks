@@ -90,7 +90,7 @@ jobs:
         run: |
           cd $AIM_DEP_DIR
           curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
-          tar -xzf zlib-1.2.11.tar.gz
+          tar zxvf zlib-1.2.11.tar.gz
           cd zlib-1.2.11/
           ./configure
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
@@ -105,7 +105,6 @@ jobs:
           tar zxvf bzip2-1.0.8.tar.gz
           cd bzip2-1.0.8/
           make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          # make -f Makefile-libbz2_so CFLAGS="-fPIC" CXXFLAGS="-fPIC"
           make install PREFIX=..
           cd ../
           rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
@@ -177,8 +176,6 @@ jobs:
 
       - name: Build bdist wheel
         run: |
-          # python setup.py bdist_wheel -d dist --plat-name=macosx_12_0_x86_64
-          # python setup.py bdist_wheel -d dist --plat-name=macosx_11_0_x86_64
           python setup.py bdist_wheel -d dist --plat-name=macosx_10_14_x86_64
 
       - name: Installing from bdist
