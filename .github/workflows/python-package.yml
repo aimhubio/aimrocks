@@ -1,5 +1,7 @@
 name: aimrocks packaging pipeline
 
+on: workflow_dispatch
+
 jobs:
   linux-dist:
     runs-on: ubuntu-latest
