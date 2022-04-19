@@ -72,128 +72,79 @@ jobs:
         run: |
           python -m twine upload -u __token__ -p "${PYPI_PASSWORD}" manylinux_dist/*
 
-  macos-dist:
-    runs-on: ${{matrix.os}}
+  macos-deps:
+    runs-on: m1
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
-        os: [ 'macos-latest' ]
-    name: Python ${{ matrix.python-version }} on ${{ matrix.os }} build
+        arch: ['arm64', 'x86_64']
+    name: Preparing dependencies for ${{ matrix.arch }} build
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.14
-      AIM_DEP_DIR: /tmp/aimrocks_deps
+      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
+      CMAKE: /opt/homebrew/bin/cmake
     steps:
       - name: Preparing Build Dir for Dependencies
         run: |
           mkdir -p $AIM_DEP_DIR
-
-      - name: Building ZLib
-        run: |
-          cd $AIM_DEP_DIR
-          curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
-          tar zxvf zlib-1.2.11.tar.gz
-          cd zlib-1.2.11/
-          ./configure
-          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install prefix=..
-          cd ../
-          rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
-
-      - name: Building BZip2
-        run: |
-          cd $AIM_DEP_DIR
-          curl https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.tar.gz
-          tar zxvf bzip2-1.0.8.tar.gz
-          cd bzip2-1.0.8/
-          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install PREFIX=..
-          cd ../
-          rm -rf bzip2-1.0.8 bzip2-1.0.8.tar.gz
-
-      - name: Building LZ4
-        run: |
-          cd $AIM_DEP_DIR
-          curl -L  https://github.com/lz4/lz4/archive/v1.9.3.tar.gz -o lz4-1.9.3.tar.gz
-          tar zxvf lz4-1.9.3.tar.gz
-          cd lz4-1.9.3
-          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make PREFIX=$PWD/.. install
-          cd ..
-          rm -rf lz4-1.9.3 lz4-1.9.3.tar.gz
-
-      - name: Building Snappy
-        run: |
-          cd $AIM_DEP_DIR
-          curl -L https://github.com/google/snappy/archive/1.1.8.tar.gz -o snappy-1.1.8.tar.gz
-          tar zxvf snappy-1.1.8.tar.gz
-          cd snappy-1.1.8
-          mkdir build
-          cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../.. CFLAGS="-fPIC" CXXFLAGS="-fPIC" -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
-          make
-          make install
-          cd ../..
-          rm -rf snappy-1.1.8 snappy-1.1.8.tar.gz
-
-      - name: Building ZSTD
-        run: |
-          cd $AIM_DEP_DIR
-          curl -L https://github.com/facebook/zstd/archive/v1.1.3.tar.gz -o zstd-1.1.3.tar.gz
-          tar zxvf zstd-1.1.3.tar.gz
-          cd zstd-1.1.3
-          make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
-          make install PREFIX=$PWD/..
-          cd ..
-          rm -rf zstd-1.1.3 zstd-1.1.3.tar.gz
+          rm -rf $AIM_DEP_DIR/*
 
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
+      - name: Building ZLib
+        run: |
+          pwd
+          ls -lhatr .github/workflows/mac
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-zlib.sh
+
+      - name: Building BZip2
+        run: |
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-bzip2.sh
+
+      - name: Building LZ4
+        run: |
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-lz4.sh
+
+      - name: Building Snappy
+        run: |
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-snappy.sh
+
+      - name: Building ZSTD
+        run: |
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-zstd.sh
 
       - name: Building RocksDB
         run: |
-          # rocksdb
-          cd $AIM_DEP_DIR
-          rm lib/*.dylib
-          curl -L https://github.com/facebook/rocksdb/archive/6.29.fb.tar.gz -o rocksdb-6.29.fb.tar.gz
-          tar zxvf rocksdb-6.29.fb.tar.gz
-          cd rocksdb-6.29.fb
-          LIBRARY_PATH=$AIM_DEP_DIR/lib PORTABLE=1 make shared_lib PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I$AIM_DEP_DIR/include" USE_RTTI=0 DEBUG_LEVEL=0 -j6
-          strip -S librocksdb.dylib
-          install_name_tool -id @rpath/librocksdb.dylib librocksdb.dylib
-          cp librocksdb.dylib $AIM_DEP_DIR/lib
-          LIBRARY_PATH=$AIM_DEP_DIR/lib PREFIX="$AIM_DEP_DIR" PORTABLE=1 make install-headers PLATFORM_SHARED_VERSIONED=false EXTRA_CXXFLAGS="-fPIC -I$AIM_DEP_DIR/include" USE_RTTI=0 DEBUG_LEVEL=0 -j6
-          cd ..
-          rm -rf rocksdb-6.29.fb rocksdb-6.29.fb.tar.gz
+          arch -${{matrix.arch}} ./.github/workflows/mac/build-rocksdb.sh
 
-      - name: Install dev dependencies
-        run: |
-          python -m pip install -r requirements.dev.txt
 
-      - name: Build bdist wheel
+  macos-dist:
+    runs-on: m1
+    needs: macos-deps
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+        arch: ['arm64', 'x86_64']
+        exclude:
+          - arch: 'arm64'
+            python-version: 3.6
+          - arch: 'arm64'
+            python-version: 3.7
+    # requirement for custom runners: having cmake and python installed
+    name: Python ${{ matrix.python-version }} for ${{ matrix.arch }} build
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 10.14
+      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
+      PYTHON: /opt/conda/${{ matrix.arch }}/envs/py${{ matrix.python-version }}/bin/python
+    steps:
+      - name: Build and test wheels
         run: |
-          python setup.py bdist_wheel -d dist --plat-name=macosx_10_14_x86_64
-
-      - name: Installing from bdist
-        run: |
-          python -m pip install dist/*.whl
-
-      - name: Inspecting bdist files
-        run: |
-          python -m pip show -f aimrocks
-
-      - name: Test bdist
-        run: |
-          python -m pytest tests || true
+          arch -${{matrix.arch}} $PYTHON -m build
 
       - name: Publish wheel
         env:
           PYPI_PASSWORD: ${{ secrets.pypi_password }}
         run: |
-          python -m twine upload -u __token__ -p "${PYPI_PASSWORD}" dist/*
+          $PYTHON -m twine upload --verbose -u __token__ -p "${PYPI_PASSWORD}" dist/*.whl
