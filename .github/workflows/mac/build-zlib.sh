@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+cd $AIM_DEP_DIR
+curl -L https://www.zlib.net/fossils/zlib-1.2.11.tar.gz -o zlib-1.2.11.tar.gz
+tar zxvf zlib-1.2.11.tar.gz
+cd zlib-1.2.11/
+./configure
+make CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+make install prefix=..
+cd ../
+rm -rf zlib-1.2.11 zlib-1.2.11.tar.gz
