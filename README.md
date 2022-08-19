@@ -2,7 +2,7 @@
 
 `aimrocks` is a python package written in Cython, similar to [python-rocksdb](https://python-rocksdb.readthedocs.io/en/latest/).
 
-It uses statically linked libraries for rocksdb and compression libraries it depends on, 
+It uses statically linked libraries for rocksdb (version 6.29.5) and compression libraries it depends on, 
 so `aimrocks` can be used out of the box (without requiring additional installation of any of those).
 
 ### Example usage
