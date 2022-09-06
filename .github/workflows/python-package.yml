@@ -5,7 +5,6 @@ on: workflow_dispatch
 jobs:
   linux-dist-aarch64:
     runs-on: m1
-    needs: macos-deps
     strategy:
       fail-fast: false
       matrix:
