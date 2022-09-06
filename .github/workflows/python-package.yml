@@ -3,6 +3,49 @@ name: aimrocks packaging pipeline
 on: workflow_dispatch
 
 jobs:
+  linux-dist-aarch64:
+    runs-on: m1
+    needs: macos-deps
+    strategy:
+      fail-fast: false
+      matrix:
+        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
+    name: Linux aarch64 wheels build (using Docker on M1 Mac) ${{ matrix.manylinux-version }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Pull Docker Images
+        run: |
+         docker pull quay.io/pypa/${{ matrix.manylinux-version }}
+
+      - name: Building dependencies for ${{ matrix.manylinux-version }}
+        run: |
+         docker build \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
+         --target deps .
+
+      - name: Building rocksdb for ${{ matrix.manylinux-version }}
+        run: |
+         docker build \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
+         --target rocksdb .
+
+      - name: Building wheels for ${{ matrix.manylinux-version }}
+        run: |
+         docker build \
+         --build-arg FROM=quay.io/pypa/${{ matrix.manylinux-version }} \
+         --target wheels . \
+         -t aimhubio/aimrocks:${{ matrix.manylinux-version }}
+
+      - name: Auditing wheels for ${{ matrix.manylinux-version }}
+        run: |
+         mkdir -p manylinux_dist/ && \
+         docker run --rm \
+         --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
+         aimhubio/aimrocks:${{ matrix.manylinux-version }} \
+         bash -e /opt/aimrocks/docker/audit-wheels.sh
+          
   linux-dist:
     runs-on: ubuntu-latest
     strategy:
