@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         manylinux-version: [ 'manylinux_2_28_aarch64', 'manylinux2014_aarch64', 'manylinux_2_24_aarch64' ]
-    name: Linux aarch64 wheels build (using Docker on M1 Mac) ${{ matrix.manylinux-version }}
+    name: Building ${{ matrix.manylinux-version }} using Docker on M1 Mac
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -55,7 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
-    name: Linux wheels build (using Docker) ${{ matrix.manylinux-version }}
+    name: Building ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
         run: |
@@ -128,7 +128,7 @@ jobs:
       fail-fast: true
       matrix:
         arch: ['arm64', 'x86_64']
-    name: Preparing dependencies for ${{ matrix.arch }} build
+    name: Preparing dependencies for ${{ matrix.arch }} Mac build
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.14
       AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
