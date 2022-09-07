@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         manylinux-version: [ 'manylinux_2_28_aarch64', 'manylinux2014_aarch64', 'manylinux_2_24_aarch64' ]
-    name: Building ${{ matrix.manylinux-version }} using Docker on M1 Mac
+    name: ${{ matrix.manylinux-version }} using Docker on M1 Mac
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -82,7 +82,7 @@ jobs:
       fail-fast: false
       matrix:
         manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
-    name: Building ${{ matrix.manylinux-version }}
+    name: ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
         run: |
