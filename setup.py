@@ -82,7 +82,7 @@ exts = [
 
 setup(
     name="aimrocks",
-    version='0.2.2.dev5',
+    version='0.2.2.dev6',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython>=3.0.0a9'],
     packages=find_packages('./src'),
