@@ -79,7 +79,7 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
         with:
-          key: aimrocks-cython-manylinux-build-${{ matrix.manylinux-version }}
+          key: aimrocks-cython-manylinux-build-${{ matrix.manylinux-version }}-{hash}
 
       - name: Building dependencies for ${{ matrix.manylinux-version }}
         run: |
