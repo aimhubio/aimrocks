@@ -107,6 +107,8 @@ jobs:
         continue-on-error: true
         with:
           key: aimrocks-cython-manylinux-build-${{ matrix.manylinux-version }}-{hash}
+          restore-keys: |
+            aimrocks-cython-manylinux-build-${{ matrix.manylinux-version }}-
 
       - name: Building dependencies for ${{ matrix.manylinux-version }}
         run: |
