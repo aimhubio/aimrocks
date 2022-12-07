@@ -33,11 +33,18 @@ aimrocks_extra_link_args = []
 if platform.system() == 'Darwin':
     aimrocks_extra_compile_args += ['-mmacosx-version-min=10.7', '-stdlib=libc++']
     aimrocks_extra_link_args += ["-Wl,-rpath,@loader_path"]
+elif platform.system() == 'Windows':
+    aimrocks_extra_compile_args = ['/std:c++latest', '/permissive-', '/W3', '/O2', '/EHsc', '/GL']
+    aimrocks_extra_link_args = ['/LTCG']
 else:
     aimrocks_extra_link_args += ["-Wl,-rpath,$ORIGIN"]
 
-third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
-third_party_deps = ['rocksdb']
+if platform.system() == 'Windows':
+    third_party_install_dir = os.environ.get('AIM_DEP_DIR', '../vcpkg/installed/x64-windows-static-md')
+    third_party_deps = ['rocksdb', 'bz2', 'lz4', 'snappy', 'zlib', 'zstd', 'rpcrt4', 'shlwapi']
+else:
+    third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
+    third_party_deps = ['rocksdb']
 
 third_party_lib_dir = os.path.join(third_party_install_dir, 'lib')
 third_party_libs = glob(os.path.join(third_party_lib_dir, 'librocksdb.*'))
@@ -75,7 +82,7 @@ exts = [
         language='c++',
         include_dirs=[local_include_dir],
         library_dirs=[third_party_lib_dir],
-        libraries=['rocksdb'],
+        libraries=third_party_deps,
     )
 ]
 
