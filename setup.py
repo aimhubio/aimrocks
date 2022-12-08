@@ -41,13 +41,19 @@ else:
 
 if platform.system() == 'Windows':
     third_party_install_dir = os.environ.get('AIM_DEP_DIR', '../vcpkg/installed/x64-windows-static-md')
-    third_party_deps = ['rocksdb', 'bz2', 'lz4', 'snappy', 'zlib', 'zstd', 'rpcrt4', 'shlwapi']
+    third_party_deps = ['rocksdb', 'bz2', 'lz4', 'snappy', 'zlib', 'zstd']
 else:
     third_party_install_dir = os.environ.get('AIM_DEP_DIR', '/usr/local')
     third_party_deps = ['rocksdb']
 
 third_party_lib_dir = os.path.join(third_party_install_dir, 'lib')
-third_party_libs = glob(os.path.join(third_party_lib_dir, 'librocksdb.*'))
+if platform.system() == 'Windows':
+    third_party_libs = [
+        os.path.join(third_party_lib_dir, lib + '.lib') for lib in third_party_deps
+    ]
+    third_party_deps += ['rpcrt4', 'shlwapi']  # Windows system libs used by rocksdb
+else:
+    third_party_libs = glob(os.path.join(third_party_lib_dir, 'librocksdb.*'))
 
 third_party_headers = [os.path.join(third_party_install_dir, 'include/rocksdb')]
 
