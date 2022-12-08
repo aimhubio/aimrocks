@@ -49,7 +49,8 @@ else:
 third_party_lib_dir = os.path.join(third_party_install_dir, 'lib')
 if platform.system() == 'Windows':
     third_party_libs = [
-        os.path.join(third_party_lib_dir, lib + '.lib') for lib in third_party_deps
+        os.path.join(third_party_lib_dir, lib + '.lib')
+        for lib in third_party_deps
     ]
     third_party_deps += ['rpcrt4', 'shlwapi']  # Windows system libs used by rocksdb
 else:
