@@ -20,7 +20,7 @@ echo "build python wheels"
 python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39")
 if [[ $platform != centos_5 ]]
 then
-  python_versions+=("cp310-cp310")
+  python_versions+=("cp310-cp310", "cp311-cp311")
 fi
 
 for python_version in "${python_versions[@]}"
