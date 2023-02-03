@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
+        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2014_x86_64', 'manylinux_2_24_x86_64' ]
     name: Linux wheels build (using Docker) ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
