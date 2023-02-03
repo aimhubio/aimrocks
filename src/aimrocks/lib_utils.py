@@ -17,9 +17,20 @@ def get_lib_dir():
     return path
 
 def get_libs():
-    return [
+    libs = [
         'rocksdb',
     ]
+    if platform.system() == 'Windows':
+        libs += [
+            'bz2',
+            'lz4',
+            'snappy',
+            'zlib',
+            'zstd',
+            'rpcrt4',
+            'shlwapi',
+        ]
+    return libs
 
 def get_lib_filename(name, lib_dir):
     if platform.system() == 'Darwin':

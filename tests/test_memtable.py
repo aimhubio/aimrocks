@@ -13,6 +13,7 @@ def test_open_skiplist_memtable_factory():
     loc = tempfile.mkdtemp()
     try:
         test_db = aimrocks.DB(os.path.join(loc, "test"), opts)
+        del test_db
     finally:
         shutil.rmtree(loc)
 
@@ -25,5 +26,6 @@ def test_open_vector_memtable_factory():
     loc = tempfile.mkdtemp()
     try:
         test_db = aimrocks.DB(os.path.join(loc, "test"), opts)
+        del test_db
     finally:
         shutil.rmtree(loc)
