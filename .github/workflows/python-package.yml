@@ -8,7 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2014_x86_64', 'manylinux_2_24_x86_64' ]
+#        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2014_x86_64', 'manylinux_2_24_x86_64' ]
+        manylinux-version: [ 'manylinux2010_x86_64' ]
     name: Linux wheels build (using Docker) ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
@@ -72,79 +73,79 @@ jobs:
         run: |
           python -m twine upload -u __token__ -p "${PYPI_PASSWORD}" manylinux_dist/*
 
-  macos-deps:
-    runs-on: m1
-    strategy:
-      fail-fast: true
-      matrix:
-        arch: ['arm64', 'x86_64']
-    name: Preparing dependencies for ${{ matrix.arch }} build
-    env:
-      MACOSX_DEPLOYMENT_TARGET: 10.14
-      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
-      CMAKE: /opt/homebrew/bin/cmake
-    steps:
-      - name: Preparing Build Dir for Dependencies
-        run: |
-          mkdir -p $AIM_DEP_DIR
-          rm -rf $AIM_DEP_DIR/*
+#  macos-deps:
+#    runs-on: m1
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        arch: ['arm64', 'x86_64']
+#    name: Preparing dependencies for ${{ matrix.arch }} build
+#    env:
+#      MACOSX_DEPLOYMENT_TARGET: 10.14
+#      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
+#      CMAKE: /opt/homebrew/bin/cmake
+#    steps:
+#      - name: Preparing Build Dir for Dependencies
+#        run: |
+#          mkdir -p $AIM_DEP_DIR
+#          rm -rf $AIM_DEP_DIR/*
+#
+#      - name: Checkout sources
+#        uses: actions/checkout@v2
+#
+#      - name: Building ZLib
+#        run: |
+#          pwd
+#          ls -lhatr .github/workflows/mac
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-zlib.sh
+#
+#      - name: Building BZip2
+#        run: |
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-bzip2.sh
+#
+#      - name: Building LZ4
+#        run: |
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-lz4.sh
+#
+#      - name: Building Snappy
+#        run: |
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-snappy.sh
+#
+#      - name: Building ZSTD
+#        run: |
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-zstd.sh
+#
+#      - name: Building RocksDB
+#        run: |
+#          arch -${{matrix.arch}} ./.github/workflows/mac/build-rocksdb.sh
+#
 
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Building ZLib
-        run: |
-          pwd
-          ls -lhatr .github/workflows/mac
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-zlib.sh
-
-      - name: Building BZip2
-        run: |
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-bzip2.sh
-
-      - name: Building LZ4
-        run: |
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-lz4.sh
-
-      - name: Building Snappy
-        run: |
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-snappy.sh
-
-      - name: Building ZSTD
-        run: |
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-zstd.sh
-
-      - name: Building RocksDB
-        run: |
-          arch -${{matrix.arch}} ./.github/workflows/mac/build-rocksdb.sh
-
-
-  macos-dist:
-    runs-on: m1
-    needs: macos-deps
-    strategy:
-      fail-fast: true
-      matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' , '3.11']
-        arch: ['arm64', 'x86_64']
-        exclude:
-          - arch: 'arm64'
-            python-version: 3.6
-          - arch: 'arm64'
-            python-version: 3.7
-    # requirement for custom runners: having cmake and python installed
-    name: Python ${{ matrix.python-version }} for ${{ matrix.arch }} build
-    env:
-      MACOSX_DEPLOYMENT_TARGET: 10.14
-      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
-      PYTHON: /opt/conda/${{ matrix.arch }}/envs/py${{ matrix.python-version }}/bin/python
-    steps:
-      - name: Build and test wheels
-        run: |
-          arch -${{matrix.arch}} $PYTHON -m build
-
-      - name: Publish wheel
-        env:
-          PYPI_PASSWORD: ${{ secrets.pypi_password }}
-        run: |
-          $PYTHON -m twine upload --verbose -u __token__ -p "${PYPI_PASSWORD}" dist/*.whl
+#  macos-dist:
+#    runs-on: m1
+#    needs: macos-deps
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' , '3.11']
+#        arch: ['arm64', 'x86_64']
+#        exclude:
+#          - arch: 'arm64'
+#            python-version: 3.6
+#          - arch: 'arm64'
+#            python-version: 3.7
+#    # requirement for custom runners: having cmake and python installed
+#    name: Python ${{ matrix.python-version }} for ${{ matrix.arch }} build
+#    env:
+#      MACOSX_DEPLOYMENT_TARGET: 10.14
+#      AIM_DEP_DIR: /tmp/run/${{ github.run_number }}/${{ matrix.arch }}
+#      PYTHON: /opt/conda/${{ matrix.arch }}/envs/py${{ matrix.python-version }}/bin/python
+#    steps:
+#      - name: Build and test wheels
+#        run: |
+#          arch -${{matrix.arch}} $PYTHON -m build
+#
+#      - name: Publish wheel
+#        env:
+#          PYPI_PASSWORD: ${{ secrets.pypi_password }}
+#        run: |
+#          $PYTHON -m twine upload --verbose -u __token__ -p "${PYPI_PASSWORD}" dist/*.whl
