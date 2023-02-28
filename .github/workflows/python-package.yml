@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2010_x86_64', 'manylinux_2_24_x86_64' ]
+        manylinux-version: [ 'manylinux1_x86_64', 'manylinux2014_x86_64', 'manylinux_2_24_x86_64' ]
     name: ${{ matrix.manylinux-version }}
     steps:
       - name: Install Docker & images
@@ -194,7 +194,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' , '3.11']
         arch: ['arm64', 'x86_64']
         exclude:
           - arch: 'arm64'
