@@ -18,7 +18,7 @@ cd /opt/aimrocks
 ls -lhatr dist
 
 $INTERNAL_PYTHON -m pip install --upgrade pip
-$INTERNAL_PYTHON -m pip install git+https://github.com/aimhubio/auditwheel.git@include-exclude
+$INTERNAL_PYTHON -m pip install git+https://github.com/aimhubio/auditwheel.git@include-exclude-new
 
 for whl in dist/*.whl
 do
