@@ -625,6 +625,7 @@ cdef class DB(IDB):
     cpdef itersitems(self, column_families)
     cpdef snapshot(self)
     cpdef get_property(self, prop, ColumnFamilyHandle column_family = *)
+    cpdef try_catch_up_with_primary(self)
     cpdef get_live_files_metadata(self)
     cpdef void compact_range(
         self,
