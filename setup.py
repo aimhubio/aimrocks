@@ -92,7 +92,7 @@ exts = [
 
 setup(
     name="aimrocks",
-    version='0.5.0',
+    version='0.5.1',
     description='RocksDB wrapper implemented in Cython.',
     setup_requires=['setuptools>=25', 'Cython>=3.0.0a9'],
     packages=find_packages('./src'),
@@ -101,4 +101,14 @@ setup(
     ext_modules=cythonize(exts),
     include_package_data=True,
     zip_safe=False,
+    classifiers=[
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+    ],
 )
