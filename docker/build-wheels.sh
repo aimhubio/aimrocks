@@ -17,7 +17,7 @@ fi
 cd /opt/aimrocks
 
 echo "build python wheels"
-python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311")
+python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311" "cp312-cp312")
 
 for python_version in "${python_versions[@]}"
 do
