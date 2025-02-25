@@ -16,14 +16,14 @@ jobs:
         with:
           python-version: '3.9'
           architecture: x64
-          
+
       - name: Install dev dependencies
         run: |
           python -m pip install twine
-          
+
       - name: Download all the wheels
         uses: actions/download-artifact@v3
-          
+
       - name: Publish wheels
         env:
           PYPI_PASSWORD: ${{ secrets.pypi_password }}
@@ -71,11 +71,11 @@ jobs:
          --mount type=bind,source=$PWD/manylinux_dist,target=/opt/aimrocks/manylinux_dist \
          aimhubio/aimrocks:${{ matrix.manylinux-version }} \
          bash -e /opt/aimrocks/docker/audit-wheels.sh
-         
+
       - uses: actions/upload-artifact@v3
         with:
           path: manylinux_dist/*.whl
-          
+
   linux-dist-x86_64:
     runs-on: ubuntu-latest
     strategy:
@@ -194,7 +194,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' , '3.11', '3.12']
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' , '3.11', '3.12', '3.13']
         arch: ['arm64', 'x86_64']
         exclude:
           - arch: 'arm64'
@@ -211,7 +211,7 @@ jobs:
       - name: Build and test wheels
         run: |
           arch -${{matrix.arch}} $PYTHON -m build
-          
+
       - uses: actions/upload-artifact@v3
         with:
           path: dist/*.whl
