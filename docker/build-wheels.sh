@@ -17,14 +17,16 @@ fi
 cd /opt/aimrocks
 
 echo "build python wheels"
-python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311" "cp312-cp312")
+python_versions=("cp36-cp36m" "cp37-cp37m" "cp38-cp38" "cp39-cp39" "cp310-cp310" "cp311-cp311" "cp312-cp312" "cp313-cp313")
 
 for python_version in "${python_versions[@]}"
 do
   python_exe=/opt/python/${python_version}/bin/python
   if [ -f "$python_exe" ]
   then
+    echo "##[group]Building ${python_version}\n\n" >&2
     $python_exe -m build
     rm -rf build
+    echo "##[endgroup]"
   fi
 done
